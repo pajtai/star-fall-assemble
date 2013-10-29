@@ -1,0 +1,15 @@
+{
+  "name": "deferredStateMachine",
+  "dependencies": {
+    "jquery": "~2.0.3",
+    "requirejs": "~2.1.8",
+    "deferred-state-machine" : "~0.0.4"
+  },
+  "devDependencies": {
+    "mocha": "~1.12.1",
+    "chai": "~1.7.2",
+    "squire": "*",
+    "sinon": "~1.7.3",
+    "sinon-chai": "~2.4.0"
+  }
+}
