@@ -12,5 +12,5 @@ require.config({
 require([
     'sfa'
 ], function (SFA) {
-    SFA.transition('falling');
+    SFA.beginFalling();
 });
