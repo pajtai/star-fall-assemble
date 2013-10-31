@@ -24,6 +24,9 @@ module.exports = function (grunt) {
                 files : [
                     'tests/**/*.js',
                     'app/**/*.js'
+                ],
+                tasks: [
+                    'jshint'
                 ]
             }
         },
@@ -77,11 +80,21 @@ module.exports = function (grunt) {
                     dist : 'build'
                 }
             }
-        }
+        },
+
+        jshint : {
+            files : [
+                'app/**/*.js',
+                '!app/vendor/**/*.js'
+            ],
+            options : {
+                jshintrc : '.jshintrc'
+            }
+        },
     });
 
     // To start editing your slideshow using livereload, run 'grunt server'
-    grunt.registerTask('server', 'Build and watch task', ['connect:app',  'open:app', 'watch']);
+    grunt.registerTask('server', 'Build and watch task', ['jshint', 'connect:app',  'open:app', 'watch']);
     grunt.registerTask('testServer', 'Build and watch task', ['connect:tests',  'open:tests', 'watch']);
     grunt.registerTask('deploy', 'Deploy website to gh-pages', ['clean:build', 'copy:build', 'build_gh_pages:build']);
 };

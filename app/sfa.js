@@ -1,26 +1,6 @@
 /*global define:false */
-define(['jquery', 'engine'], function ($, engine) {
+define(['jquery', 'engine', 'starFactory'], function ($, engine, StarFactory) {
     'use strict';
-
-    var random = Math.random;
-
-    function Star (maxWidth, maxHeight) {
-        this.x = 0;
-        this.y = Math.ceil(Math.random() * maxHeight);
-        this.width = 1 + (random() * 9);
-        this.direction = 0;
-        this.speed = 1 + (Math.random() * 2);
-        this.maxWidth = maxWidth;
-    }
-
-    Star.prototype.move = function () {
-        var showing = true;
-        this.x = this.x + this.speed;
-        if (this.x > this.maxWidth) {
-            showing = false;
-        }
-        return showing;
-    };
 
     return {
         stars : [],
@@ -42,6 +22,8 @@ define(['jquery', 'engine'], function ($, engine) {
             width : this.canvas.width,
             height : this.canvas.height
         };
+        StarFactory.setCanvasSize(this.size.width, this.size.height);
+        StarFactory.loadContext(this);
         this.context = this.canvas.getContext('2d');
         engine.config({
             context : this,
@@ -51,25 +33,16 @@ define(['jquery', 'engine'], function ($, engine) {
     }
 
     function update (dt, gameTimeStamp, fps) {
-
-        var self = this,
-            remove = [];
+        var self = this;
         if (this.previousFps != fps) {
             this.$fps.html(fps);
         }
-        $.each(this.stars, function (index, star) {
-            if (!star.move()) {
-                remove.push(index);
-            }
-        });
-        $.each(remove, function (index, item) {
-            self.stars.splice(item, 1);
-        });
+
         this.clear();
-        $.each(this.stars, function (index, item) {
+        StarFactory.updateStars(dt, gameTimeStamp);
+        StarFactory.each(function (index, item) {
             self.drawRect(item);
         });
-
         if (gameTimeStamp >= this.nextStarInterval) {
             this.createNewStar();
         }
@@ -77,14 +50,15 @@ define(['jquery', 'engine'], function ($, engine) {
 
     function createNewStar () {
         this.nextStarInterval += this.starIntervalMs;
-        this.stars.push(new Star(this.size.width, this.size.height));
+        StarFactory.createStar();
     }
 
     function drawRect (item) {
-        this.context.fillRect(item.x
-            , item.y
-            , item.width
-            , item.width);
+        this.context.fillStyle = '#0000FF';
+        this.context.fillRect(item.x,
+            item.y,
+            item.width,
+            item.width);
     }
 
     function clear () {
