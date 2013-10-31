@@ -5,7 +5,7 @@ require.config({
         jquery : 'vendor/jquery/jquery',
         deferredStateMachineFactory : 'vendor/deferred-state-machine/app/deferredStateMachineFactory',
 
-        sfa : 'views/sfa'
+        sfa : 'sfa'
     }
 });
 

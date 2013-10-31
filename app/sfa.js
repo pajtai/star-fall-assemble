@@ -1,19 +1,6 @@
 /*global define:false */
-define(['jquery', 'deferredStateMachineFactory'], function ($, Factory) {
+define(['jquery', 'engine'], function ($, engine) {
     'use strict';
-
-    var defaultFps = 1000 / 60,
-        requestAnimationFrame = (function () {
-
-            return (window.requestAnimationFrame ||
-                window.webkitRequestAnimationFrame ||
-                window.mozRequestAnimationFrame ||
-                window.oRequestAnimationFrame ||
-                window.msRequestAnimationFrame ||
-                function (callback) {
-                    setTimeout(callback, defaultFps);
-                });
-        }());
 
     return {
         stars : [],
@@ -33,10 +20,15 @@ define(['jquery', 'deferredStateMachineFactory'], function ($, Factory) {
         };
         this.context = this.canvas.getContext('2d');
         this.stars.push({x:0, y:0, width:10, direction: 0, speed: 1});
-        this.update();
+        engine.config({
+            context: this,
+            update: this.update
+        });
+        engine.start();
     }
 
-    function update () {
+    function update (dt, gameTimeStamp, fps) {
+        console.log(fps);
         var self = this;
         $.each(this.stars, function(index, item) {
             self.move(item, item.direction, item.speed);
@@ -45,7 +37,6 @@ define(['jquery', 'deferredStateMachineFactory'], function ($, Factory) {
         $.each(this.stars, function(index, item) {
             self.drawRect(item);
         });
-        requestAnimationFrame(this.update.bind(this));
     }
 
     function move (item, direction, speed) {
