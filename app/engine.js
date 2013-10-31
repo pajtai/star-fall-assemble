@@ -32,7 +32,7 @@ define(function () {
         this.fps = {
             ticks: 0,
             startTimeStamp: 0,
-            movingAverageIntervalMs: 5000,
+            movingAverageIntervalMs: 2500,
             fps: 0
         };
         this.go();
