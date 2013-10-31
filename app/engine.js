@@ -41,15 +41,15 @@ define(function () {
     function go() {
         var gameTimeStamp = new Date().getTime() - this.startTimeStamp,
             dt = gameTimeStamp - this.previousTimeStamp,
-            fpsElapsed = gameTimeStamp - this.startTimeStamp;
+            fpsElapsed = gameTimeStamp - this.fps.startTimeStamp;
 
         this.previousTimeStamp = gameTimeStamp;
 
         this.fps.ticks += 1;
-        console.log(fpsElapsed);
+
         // TODO: makes this into a moving average
         if (this.fps.movingAverageIntervalMs < fpsElapsed) {
-            this.fps.fps = 1000 * this.fps.ticks / fpsElapsed;
+            this.fps.fps = Math.round(1000 * this.fps.ticks / fpsElapsed);
             this.fps.ticks = 0;
             this.fps.startTimeStamp = gameTimeStamp;
         }
