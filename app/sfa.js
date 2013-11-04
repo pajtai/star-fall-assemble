@@ -9,7 +9,7 @@ define(['jquery', 'engine', 'starFactory'], function ($, engine, StarFactory) {
         clear : clear,
         drawRect : drawRect,
         previousFps : 0,
-        starIntervalMs : 1000,
+        starIntervalMs : 200,
         nextStarInterval : 0,
         createNewStar : createNewStar
     };

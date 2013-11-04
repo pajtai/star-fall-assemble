@@ -37,6 +37,14 @@ define(['jquery', 'star'], function ($, Star) {
                 remove.push(index);
             }
         });
+
+        if (stars.length) {
+            $.each(collisionsInList(stars), function (index, collision) {
+                collision[0].speed = 0;
+                collision[1].speed = 0;
+            });
+        }
+
         // Sorting is needed so that the splices don't remove the wrong items ~
         remove.sort(function (a, b) {
             return b > a;
@@ -44,11 +52,6 @@ define(['jquery', 'star'], function ($, Star) {
         $.each(remove, function (index, item) {
             stars.splice(item, 1);
         });
-
-        debugger;
-        if (stars.length) {
-            collisionsInList(stars);
-        }
     }
 
     function each (callback) {
@@ -73,38 +76,45 @@ define(['jquery', 'star'], function ($, Star) {
     }
 
      function collisionsInList(list1) {
-        var a = [];
+        var collisions = [];
 
          $.each(combinations(list1, 2), function(index, pair) {
-            if( collidesWith(pair[0], pair[1]) ) {
-                a.push([pair[0], pair[1]]);
+            if(collidesWith(pair[0], pair[1]) ) {
+                collisions.push([
+                    pair[0],
+                    pair[1]
+                ]);
             }
         });
 
-        return a;
+        return collisions;
     }
 
-    // Never ending loop
-    function combinations(list, n) {
-        var f = function(i) {
-            if(list.isSpriteList !== undefined) {
-                return list.at(i)
-            } else {  // s is an Array
-                return list[i];
-            }
-        };
-        var r = [];
-        var m = new Array(n);
-        for (var i = 0; i < n; i++) m[i] = i;
-        for (var i = n - 1, sn = list.length; 0 <= i; sn = list.length) {
-            r.push( m.map(f) );
-            while (0 <= i && m[i] == sn - 1) { i--; sn--; }
-            if (0 <= i) {
-                m[i] += 1;
-                for (var j = i + 1; j < n; j++) m[j] = m[j-1] + 1;
-                i = n - 1;
-            }
+    // All possilble pairwise combos from a list
+    function combinations(list) {
+        var i, j, l = list.length,
+            combos = [];
+
+        if (0 === l) {
+            return combos;
         }
-        return r;
+
+        // i is the main index we are looping over
+        // j is the index of the paired items we are looping over
+        i = l-1;
+        while(i + 1) {
+            j = i-1;
+            while(j + 1) {
+                if (list[i] !== list[j]) {
+                    combos.push([
+                        list[i],
+                        list[j]
+                    ]);
+                }
+                --j;
+            }
+            --i;
+        }
+        return combos;
     }
 });
