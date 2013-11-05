@@ -2,7 +2,11 @@
 define(['jquery', 'star'], function ($, Star) {
     'use strict';
 
-    var stars = [];
+    var stars = [],
+        UP = 119,
+        LEFT = 97,
+        RIGHT = 100,
+        DOWN = 115;
 
     return {
         loadContext : loadContext,
@@ -11,7 +15,9 @@ define(['jquery', 'star'], function ($, Star) {
         updateStars : updateStars,
         each : each,
         collidesWith : collidesWith,
-        collisionsInList : collisionsInList
+        collisionsInList : collisionsInList,
+        closestToThe : closestToThe,
+        toTheLeft : toTheLeft
     };
 
     function loadContext (context) {
@@ -23,8 +29,10 @@ define(['jquery', 'star'], function ($, Star) {
         this.maxHeight = maxHeight;
     }
 
-    function createStar () {
-        stars.push(new Star(this.maxWidth, this.maxHeight));
+    function createStar (focused, x, y, w, s) {
+        var star = new Star(this.maxWidth, this.maxHeight, focused, x, y, w, s);
+        stars.push(star);
+        return star;
     }
 
     function updateStars (dt, gameTimeStamp) {
@@ -130,5 +138,49 @@ define(['jquery', 'star'], function ($, Star) {
             --i;
         }
         return combos;
+    }
+
+    function toTheLeft(star) {
+        if (star.y > this.y && star.bottom < this.bottom) {
+            return true;
+        }
+        if (star.y < this.y && star.y > this.bottom) {
+            return true;
+        }
+        return false;
+    }
+
+    function closestToThe (star, direction) {
+        var closest = {
+            star: undefined,
+            distance: undefined
+            },
+            distance;
+        $.each(stars, function(index, candidate) {
+            switch (direction) {
+            case UP:
+                break;
+            case LEFT:
+                if (star.toTheLeft(candidate)) {
+                    distance = star.y - candidate.y;
+                    if (!closest.star) {
+                        closest.star = candidate;
+                        closest.distance = distance;
+                    } else {
+                        if (distance < closest.distance) {
+                            closest.star = candidate;
+                            closest.distance = distance;
+                        }
+                    }
+                }
+                break;
+            case DOWN:
+                break;
+            case RIGHT:
+                break;
+            }
+            return closest.star;
+        });
+        return closest;
     }
 });

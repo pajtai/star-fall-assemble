@@ -13,12 +13,14 @@ define(function () {
                 function (callback) {
                     setTimeout(callback, defaultFps);
                 });
-        }());
+        }()),
+        keypressQueue = [];
 
     return {
         config: config,
         start: start,
-        go : go
+        go : go,
+        keypress : keypress
     };
 
     function config(options) {
@@ -54,7 +56,12 @@ define(function () {
             this.fps.startTimeStamp = gameTimeStamp;
         }
 
-        this.options.update.call(this.options.context, dt, gameTimeStamp, this.fps.fps);
+        this.options.update.call(this.options.context, dt, gameTimeStamp, this.fps.fps, keypressQueue);
+        keypressQueue = [];
         requestAnimationFrame(this.go);
+    }
+
+    function keypress(which) {
+        keypressQueue.push(which);
     }
 });
