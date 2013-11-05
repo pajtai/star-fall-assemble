@@ -3,11 +3,12 @@ define(function () {
     'use strict';
 
     var random = Math.random,
+        floor = Math.floor,
         pi = Math.PI;
 
     Star.prototype.move = function () {
         var showing = true;
-        this.x = this.x + this.speed;
+        this.x = floor(this.x + this.speed);
         this.setOppositeCornerCoordinates();
         if (this.x > this.maxWidth) {
             showing = false;
@@ -31,9 +32,9 @@ define(function () {
 
         this.maxWidth = maxWidth;
         moveRight = random() > 0.5;
-        this.x = moveRight ? 0 : this.maxWidth;
-        this.y = Math.ceil(random() * maxHeight);
-        this.width = 1 + (random() * 9);
+        this.x = floor(moveRight ? 0 : this.maxWidth);
+        this.y = floor(Math.ceil(random() * maxHeight));
+        this.width = floor(1 + (random() * 9));
         this.setOppositeCornerCoordinates();
         this.direction = 0;
         this.speed = (moveRight ? 1 : -1) * (1 + (random() * 2));

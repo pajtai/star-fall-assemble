@@ -23,14 +23,16 @@ define(['jquery', 'star'], function ($, Star) {
         this.maxHeight = maxHeight;
     }
 
-    function createStar() {
+    function createStar () {
         stars.push(new Star(this.maxWidth, this.maxHeight));
     }
 
-    function updateStars(dt, gameTimeStamp) {
+    function updateStars (dt, gameTimeStamp) {
 
         var self = this,
-            remove = [];
+            remove = [],
+            collisions = [],
+            doneIndices = [];
 
         $.each(stars, function (index, star) {
             if (!star.move()) {
@@ -40,23 +42,30 @@ define(['jquery', 'star'], function ($, Star) {
 
         if (stars.length) {
             $.each(collisionsInList(stars), function (index, collision) {
-                collision[0].speed = 0;
-                collision[1].speed = 0;
+                collisions.push(collision[0]);
+                collisions.push(collision[1]);
+                stars[collision[0]].speed = 0;
+                stars[collision[1]].speed = 0;
             });
         }
 
+        remove = remove.concat(collisions);
         // Sorting is needed so that the splices don't remove the wrong items ~
         remove.sort(function (a, b) {
             return b > a;
         });
-        $.each(remove, function (index, item) {
-            stars.splice(item, 1);
+        $.each(remove, function (index, itemIndex) {
+            // Checking for uniqueness of removal
+            if (!doneIndices[itemIndex]) {
+                stars.splice(itemIndex, 1);
+                doneIndices[itemIndex] = true;
+            }
         });
     }
 
     function each (callback) {
         var self = this;
-        $.each(stars, function(index, item) {
+        $.each(stars, function (index, item) {
             callback.call(self.context, index, item);
         });
     }
@@ -68,18 +77,23 @@ define(['jquery', 'star'], function ($, Star) {
      * @param star2
      * @returns {boolean}
      */
-    function collidesWith(star1, star2) {
+    function collidesWith (star1, star2) {
         return ((star1.x >= star2.x && star1.x <= star2.right) ||
             (star2.x >= star1.x && star2.x <= star1.right)) &&
             ((star1.y >= star2.y && star1.y <= star2.bottom) ||
                 (star2.y >= star1.y && star2.y <= star1.bottom));
     }
 
-     function collisionsInList(list1) {
+    /**
+     *
+     * @param list
+     * @returns {Array} Array of pairs of indices of collided items
+     */
+    function collisionsInList (list) {
         var collisions = [];
 
-         $.each(combinations(list1, 2), function(index, pair) {
-            if(collidesWith(pair[0], pair[1]) ) {
+        $.each(combinations(list), function (index, pair) {
+            if (collidesWith(list[pair[0]], list[pair[1]])) {
                 collisions.push([
                     pair[0],
                     pair[1]
@@ -91,7 +105,7 @@ define(['jquery', 'star'], function ($, Star) {
     }
 
     // All possilble pairwise combos from a list
-    function combinations(list) {
+    function combinations (list) {
         var i, j, l = list.length,
             combos = [];
 
@@ -101,14 +115,14 @@ define(['jquery', 'star'], function ($, Star) {
 
         // i is the main index we are looping over
         // j is the index of the paired items we are looping over
-        i = l-1;
-        while(i + 1) {
-            j = i-1;
-            while(j + 1) {
+        i = l - 1;
+        while (i + 1) {
+            j = i - 1;
+            while (j + 1) {
                 if (list[i] !== list[j]) {
                     combos.push([
-                        list[i],
-                        list[j]
+                        i,
+                        j
                     ]);
                 }
                 --j;
