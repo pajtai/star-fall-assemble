@@ -34,8 +34,64 @@ define(function () {
         this.color = blurColor;
     };
 
+    Star.prototype.isAbove = function(star) {
+        var candidate = this;
+        if (star === candidate) {
+            return false;
+        }
+        if (candidate.y > star.y) {
+            return false;
+        }
+        return this.isOnSameVertical(star);
+    };
+
+    Star.prototype.isBelow = function(star) {
+        var candidate = this;
+        if (star === candidate) {
+            return false;
+        }
+        if (candidate.bottom < star.bottom) {
+            return false;
+        }
+        return this.isOnSameVertical(star);
+    };
+
     /**
      * Returns true if star is to the left of this.
+     * @param star
+     * @returns {boolean}
+     *
+     *
+     */
+    Star.prototype.isLeftOf = function(star) {
+        var candidate = this;
+        if (star === candidate) {
+            return false;
+        }
+        if (candidate.x > star.x) {
+            return false;
+        }
+        return this.isOnSameHorizon(star);
+    };
+
+    /**
+     * Returns true if star is to the right of this.
+     * @param star
+     * @returns {boolean}
+     */
+    Star.prototype.isRightOf = function(star) {
+        var candidate = this;
+        if (star === candidate) {
+            return false;
+        }
+        if (candidate.right < star.right) {
+            return false;
+        }
+        return this.isOnSameHorizon(star);
+    };
+
+    /**
+     *
      * @param star
      * @returns {boolean}
      *
@@ -52,14 +108,9 @@ define(function () {
      *        +---+       +---+
      *
      *
-     *
      */
-    Star.prototype.isLeftOf = function(star) {
+    Star.prototype.isOnSameHorizon = function(star) {
         var candidate = this;
-        // False if to the right of
-        if (candidate.x > star.x) {
-            return false;
-        }
         if (candidate.y < star.bottom && candidate.y > star.y) {
             return true;
         }
@@ -73,29 +124,43 @@ define(function () {
             return true;
         }
         return false;
-    };
+    }
 
     /**
-     * Returns true if star is to the right of this.
+     *
      * @param star
      * @returns {boolean}
+     *
+     *
+     *          +-------+
+     *          |   c   |
+     *          +-------+
+     *
+     *        +---+   +---+
+     *        | s |   | s |
+     *        +---+   +---+
+     *
+     *            +---+
+     *            | s |
+     *            +---+
+     *
+     *        +------------+
+     *        |     s      |
+     *        +------------+
+     *
      */
-    Star.prototype.isRightOf = function(star) {
+    Star.prototype.isOnSameVertical = function(star) {
         var candidate = this;
-        // False if to the right of
-        if (candidate.right < star.right) {
-            return false;
-        }
-        if (candidate.y < star.bottom && candidate.y > star.y) {
+        if (candidate.x > star.x && candidate.x < star.right) {
             return true;
         }
-        if (candidate.bottom > star.y && candidate.bottom < star.bottom) {
+        if (candidate.right > star.x && candidate.right < star.right) {
             return true;
         }
-        if (candidate.bottom > star.bottom && candidate.y < star.y) {
+        if (candidate.x < star.x && candidate.right > star.right) {
             return true;
         }
-        if (candidate.y > star.y && candidate.bottom < star.bottom) {
+        if (candidate.x > star.x && candidate.right < star.right) {
             return true;
         }
         return false;

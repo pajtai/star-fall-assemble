@@ -140,6 +140,18 @@ define(['jquery', 'star'], function ($, Star) {
         return combos;
     }
 
+    function assignClosest(closest, candidate, distance) {
+        if (!closest.star) {
+            closest.star = candidate;
+            closest.distance = distance;
+        } else {
+            if (distance < closest.distance) {
+                closest.star = candidate;
+                closest.distance = distance;
+            }
+        }
+    }
+
     function closestToThe (star, direction) {
         var closest = {
             star: undefined,
@@ -149,39 +161,34 @@ define(['jquery', 'star'], function ($, Star) {
         $.each(stars, function(index, candidate) {
             switch (direction) {
             case UP:
+                if (candidate.isAbove(star)) {
+                    distance = abs(star.y - candidate.bottom);
+                    assignClosest(closest, candidate, distance);
+                }
                 break;
             case LEFT:
                 if (candidate.isLeftOf(star)) {
                     distance = abs(star.x - candidate.right);
-                    if (!closest.star) {
-                        closest.star = candidate;
-                        closest.distance = distance;
-                    } else {
-                        if (distance < closest.distance) {
-                            closest.star = candidate;
-                            closest.distance = distance;
-                        }
-                    }
+                    assignClosest(closest, candidate, distance);
                 }
                 break;
             case DOWN:
+                if (candidate.isBelow(star)) {
+                    distance = abs(star.bottom - candidate.y);
+                    assignClosest(closest, candidate, distance);
+                }
                 break;
             case RIGHT:
                 if (candidate.isRightOf(star)) {
                     distance = abs(star.right - candidate.x);
-                    if (!closest.star) {
-                        closest.star = candidate;
-                        closest.distance = distance;
-                    } else {
-                        if (distance < closest.distance) {
-                            closest.star = candidate;
-                            closest.distance = distance;
-                        }
-                    }
+                    assignClosest(closest, candidate, distance);
                 }
                 break;
             }
         });
+        if (!closest.star) {
+            console.log("zip");
+        }
         return closest.star;
     }
 });
