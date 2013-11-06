@@ -6,7 +6,8 @@ define(['jquery', 'star'], function ($, Star) {
         UP = 119,
         LEFT = 97,
         RIGHT = 100,
-        DOWN = 115;
+        DOWN = 115,
+        abs = Math.abs;
 
     return {
         loadContext : loadContext,
@@ -16,8 +17,7 @@ define(['jquery', 'star'], function ($, Star) {
         each : each,
         collidesWith : collidesWith,
         collisionsInList : collisionsInList,
-        closestToThe : closestToThe,
-        toTheLeft : toTheLeft
+        closestToThe : closestToThe
     };
 
     function loadContext (context) {
@@ -57,7 +57,7 @@ define(['jquery', 'star'], function ($, Star) {
             });
         }
 
-        remove = remove.concat(collisions);
+        //remove = remove.concat(collisions);
         // Sorting is needed so that the splices don't remove the wrong items ~
         remove.sort(function (a, b) {
             return b > a;
@@ -140,16 +140,6 @@ define(['jquery', 'star'], function ($, Star) {
         return combos;
     }
 
-    function toTheLeft(star) {
-        if (star.y > this.y && star.bottom < this.bottom) {
-            return true;
-        }
-        if (star.y < this.y && star.y > this.bottom) {
-            return true;
-        }
-        return false;
-    }
-
     function closestToThe (star, direction) {
         var closest = {
             star: undefined,
@@ -161,8 +151,8 @@ define(['jquery', 'star'], function ($, Star) {
             case UP:
                 break;
             case LEFT:
-                if (star.toTheLeft(candidate)) {
-                    distance = star.y - candidate.y;
+                if (candidate.isLeftOf(star)) {
+                    distance = abs(star.x - candidate.right);
                     if (!closest.star) {
                         closest.star = candidate;
                         closest.distance = distance;
@@ -177,10 +167,21 @@ define(['jquery', 'star'], function ($, Star) {
             case DOWN:
                 break;
             case RIGHT:
+                if (candidate.isRightOf(star)) {
+                    distance = abs(star.right - candidate.x);
+                    if (!closest.star) {
+                        closest.star = candidate;
+                        closest.distance = distance;
+                    } else {
+                        if (distance < closest.distance) {
+                            closest.star = candidate;
+                            closest.distance = distance;
+                        }
+                    }
+                }
                 break;
             }
-            return closest.star;
         });
-        return closest;
+        return closest.star;
     }
 });

@@ -105,8 +105,8 @@ define(['jquery', 'engine', 'starFactory'], function ($, engine, StarFactory) {
 
     function move (direction) {
         var closest = StarFactory.closestToThe(this.player, direction);
-        console.log(direction);
         if (closest) {
+            console.log("closest!");
             this.player.blur();
             this.player = closest;
             this.player.focus();
