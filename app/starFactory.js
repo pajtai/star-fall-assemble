@@ -7,6 +7,12 @@ define(['jquery', 'star'], function ($, Star) {
         LEFT = 97,
         RIGHT = 100,
         DOWN = 115,
+        directions = {
+            d119: 'Above',
+            d97: 'LeftOf',
+            d100: 'RightOf',
+            d115: 'Below'
+        },
         abs = Math.abs;
 
     return {
@@ -157,37 +163,25 @@ define(['jquery', 'star'], function ($, Star) {
             star: undefined,
             distance: undefined
             },
-            distance;
+            distance,
+            directionMethod;
+
         $.each(stars, function(index, candidate) {
             switch (direction) {
             case UP:
-                if (candidate.isAbove(star)) {
-                    distance = abs(star.y - candidate.bottom);
-                    assignClosest(closest, candidate, distance);
-                }
-                break;
             case LEFT:
-                if (candidate.isLeftOf(star)) {
-                    distance = abs(star.x - candidate.right);
-                    assignClosest(closest, candidate, distance);
-                }
-                break;
             case DOWN:
-                if (candidate.isBelow(star)) {
-                    distance = abs(star.bottom - candidate.y);
-                    assignClosest(closest, candidate, distance);
-                }
-                break;
             case RIGHT:
-                if (candidate.isRightOf(star)) {
-                    distance = abs(star.right - candidate.x);
+                directionMethod = directions['d' + direction];
+                if (candidate['is' + directionMethod](star)) {
+                    distance = candidate['distance' + directionMethod](star);
                     assignClosest(closest, candidate, distance);
                 }
                 break;
             }
         });
         if (!closest.star) {
-            console.log("zip");
+
         }
         return closest.star;
     }

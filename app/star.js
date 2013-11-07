@@ -5,6 +5,7 @@ define(function () {
     // TODO: create array of different sized star canvases
     var random = Math.random,
         floor = Math.floor,
+        abs = Math.abs,
         pi = Math.PI,
         focusColor = '#FF0000',
         blurColor = '#0000FF';
@@ -56,13 +57,6 @@ define(function () {
         return this.isOnSameVertical(star);
     };
 
-    /**
-     * Returns true if star is to the left of this.
-     * @param star
-     * @returns {boolean}
-     *
-     *
-     */
     Star.prototype.isLeftOf = function(star) {
         var candidate = this;
         if (star === candidate) {
@@ -74,11 +68,6 @@ define(function () {
         return this.isOnSameHorizon(star);
     };
 
-    /**
-     * Returns true if star is to the right of this.
-     * @param star
-     * @returns {boolean}
-     */
     Star.prototype.isRightOf = function(star) {
         var candidate = this;
         if (star === candidate) {
@@ -89,6 +78,26 @@ define(function () {
         }
         return this.isOnSameHorizon(star);
     };
+
+    Star.prototype.distanceAbove = function (star) {
+        var candidate = this;
+        return abs(candidate.bottom - star.y);
+    }
+
+    Star.prototype.distanceBelow = function (star) {
+        var candidate = this;
+        return abs(candidate.y - star.bottom);
+    }
+
+    Star.prototype.distanceRightOf = function (star) {
+        var candidate = this;
+        return abs(candidate.x - star.right);
+    }
+
+    Star.prototype.distanceLeftOf = function (star) {
+        var candidate = this;
+        return abs(candidate.right - star.x);
+    }
 
     /**
      *
