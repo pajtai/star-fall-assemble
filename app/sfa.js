@@ -6,7 +6,8 @@ define(['jquery', 'engine', 'starFactory'], function ($, engine, StarFactory) {
     var UP = 119,
         LEFT = 97,
         RIGHT = 100,
-        DOWN = 115;
+        DOWN = 115,
+        floor = Math.floor;
 
     return {
         stars : [],
@@ -19,7 +20,8 @@ define(['jquery', 'engine', 'starFactory'], function ($, engine, StarFactory) {
         nextStarInterval : 0,
         createNewStar : createNewStar,
         listenToKeys : listenToKeys,
-        move : move
+        move : move,
+        stop : stop
     };
 
     function beginFalling () {
@@ -36,24 +38,26 @@ define(['jquery', 'engine', 'starFactory'], function ($, engine, StarFactory) {
         this.context = this.canvas.getContext('2d');
         engine.config({
             context : this,
-            update : this.update
+            update : this.update,
+            stop : this.stop
         });
         engine.start();
         // TODO: move player somewhere else
-        this.player = this.createNewStar(
+        StarFactory.setPlayer(this.createNewStar(
             true,
             this.size.width/2 - width/2,
             this.size.height/2 - width/2,
             width,
             0
-        );
+        ));
 
         this.listenToKeys();
     }
 
     function update (dt, gameTimeStamp, fps, keypresses) {
         var self = this,
-            direction;
+            direction,
+            player;
 
         if (this.previousFps != fps) {
             this.$fps.html(fps);
@@ -77,6 +81,9 @@ define(['jquery', 'engine', 'starFactory'], function ($, engine, StarFactory) {
         if (gameTimeStamp >= this.nextStarInterval) {
             this.createNewStar();
         }
+        player = StarFactory.getPlayer();
+
+        return player ? player.isAlive() : true;
     }
 
     // TODO: create attributes object
@@ -87,8 +94,8 @@ define(['jquery', 'engine', 'starFactory'], function ($, engine, StarFactory) {
 
     function drawRect (item) {
         this.context.fillStyle = item.color;
-        this.context.fillRect(item.x,
-            item.y,
+        this.context.fillRect(floor(item.x),
+            floor(item.y),
             item.width,
             item.width);
     }
@@ -104,11 +111,18 @@ define(['jquery', 'engine', 'starFactory'], function ($, engine, StarFactory) {
     }
 
     function move (direction) {
-        var closest = StarFactory.closestToThe(this.player, direction);
+        var player = StarFactory.getPlayer();
+        var closest = StarFactory.closestToThe(player, direction);
         if (closest) {
-            this.player.blur();
-            this.player = closest;
-            this.player.focus();
+            player.blur();
+            if (player.isAlive()) {
+                StarFactory.setPlayer(closest);
+                closest.focus();
+            }
         }
+    }
+
+    function stop () {
+        this.$fps.text('Game Over');
     }
 });

@@ -3,12 +3,14 @@ define(['jquery', 'star'], function ($, Star) {
     'use strict';
 
     var stars = [],
+        player,
         UP = 119,
         LEFT = 97,
         RIGHT = 100,
         DOWN = 115,
         abs = Math.abs;
 
+    // TODO: create a star manager
     return {
         loadContext : loadContext,
         setCanvasSize : setCanvasSize,
@@ -17,7 +19,9 @@ define(['jquery', 'star'], function ($, Star) {
         each : each,
         collidesWith : collidesWith,
         collisionsInList : collisionsInList,
-        closestToThe : closestToThe
+        closestToThe : closestToThe,
+        setPlayer : setPlayer,
+        getPlayer : getPlayer
     };
 
     function loadContext (context) {
@@ -37,8 +41,7 @@ define(['jquery', 'star'], function ($, Star) {
 
     function updateStars (dt, gameTimeStamp) {
 
-        var self = this,
-            remove = [],
+        var remove = [],
             collisions = [],
             doneIndices = [];
 
@@ -50,19 +53,23 @@ define(['jquery', 'star'], function ($, Star) {
 
         if (stars.length) {
             $.each(collisionsInList(stars), function (index, collision) {
+                var star1, star2;
                 collisions.push(collision[0]);
                 collisions.push(collision[1]);
-                stars[collision[0]].speed = 0;
-                stars[collision[1]].speed = 0;
+                star1 = stars[collision[0]];
+                star2 = stars[collision[1]]
+                star1.stop().kill();
+                star2.stop().kill();
             });
         }
 
-        //remove = remove.concat(collisions);
+        remove = remove.concat(collisions);
         // Sorting is needed so that the splices don't remove the wrong items ~
         remove.sort(function (a, b) {
             return b > a;
         });
         $.each(remove, function (index, itemIndex) {
+            stars[itemIndex] && stars[itemIndex].kill();
             // Checking for uniqueness of removal
             if (!doneIndices[itemIndex]) {
                 stars.splice(itemIndex, 1);
@@ -176,5 +183,13 @@ define(['jquery', 'star'], function ($, Star) {
 
         }
         return closest.star;
+    }
+
+    function setPlayer(thePlayer) {
+        player = thePlayer;
+    }
+
+    function getPlayer() {
+        return player;
     }
 });

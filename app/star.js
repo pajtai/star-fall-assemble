@@ -14,14 +14,55 @@ define(function () {
         RIGHT = 100,
         DOWN = 115;
 
+    /**
+     * Gets a random int between min and max inclussive.
+     * @param min
+     * @param max
+     * @returns {number}
+     */
+    function getRandomInt(min, max) {
+        return floor(random() * (max - min + 1) + min);
+    }
+
+    /**
+     *
+     * @param min
+     * @param max
+     * @returns {number}
+     */
+    function getRandomArbitrary(min, max) {
+        return random() * (max - min) + min;
+    }
+
+    function Star (maxWidth, maxHeight, focused, x, y, w, s) {
+        var moveRight;
+
+        if (!(this instanceof Star)) {
+            return new Star(maxWidth, maxHeight);
+        }
+
+        this.maxWidth = maxWidth;
+        this.maxHeight = maxHeight;
+        moveRight = random() > 0.5;
+        this.x = undefined !== x ? x : (moveRight ? 0 : maxWidth);
+        this.y = undefined !== y ? y : getRandomInt(0, maxHeight);
+        this.width = undefined !== w ? w : getRandomInt(5,10);
+        this.setOppositeCornerCoordinates();
+        this.direction = 0;
+        this.speed = undefined !== s ? s : ((moveRight ? 1 : -1) * getRandomArbitrary(0.1,1));
+        this.color = focused ? focusColor : blurColor;
+        this.alive = true;
+        // "this" is automatically returned ~
+    }
 
     // TODO: make stars movement depend on dt and not ticks
     Star.prototype.move = function () {
         var showing = true;
-        this.x = floor(this.x + this.speed);
+        this.x = this.x + this.speed;
         this.setOppositeCornerCoordinates();
         if (this.x > this.maxWidth || this.right < 0) {
             showing = false;
+            this.kill();
         }
         return showing;
     };
@@ -29,15 +70,32 @@ define(function () {
     Star.prototype.setOppositeCornerCoordinates = function () {
         this.right = this.x + this.width;
         this.bottom = this.y + this.width;
+        return this;
     };
 
     Star.prototype.focus = function () {
         this.color = focusColor;
+        return this;
     };
 
     Star.prototype.blur = function () {
         this.color = blurColor;
+        return this;
     };
+
+    Star.prototype.kill = function () {
+        this.alive = false;
+        return this;
+    };
+
+    Star.prototype.isAlive = function () {
+        return this.alive;
+    }
+
+    Star.prototype.stop = function () {
+        this.speed = 0;
+        return this;
+    }
 
     Star.prototype.is = function(direction, star) {
         switch (direction) {
@@ -210,23 +268,4 @@ define(function () {
     };
 
     return Star;
-
-    function Star (maxWidth, maxHeight, focused, x, y, w, s) {
-        var moveRight;
-
-        if (!(this instanceof Star)) {
-            return new Star(maxWidth, maxHeight);
-        }
-
-        this.maxWidth = maxWidth;
-        moveRight = random() > 0.5;
-        this.x = floor(undefined !== x ? x : (moveRight ? 0 : this.maxWidth));
-        this.y = floor(undefined !== y ? y : Math.ceil(random() * maxHeight));
-        this.width = floor(undefined !== w ? w : (6 + (random() * 5)));
-        this.setOppositeCornerCoordinates();
-        this.direction = 0;
-        this.speed = undefined !== s ? s : ((moveRight ? 1 : -1) * (1 + (random() * 2)));
-        this.color = focused ? focusColor : blurColor;
-        // "this" is automatically returned ~
-    }
 });

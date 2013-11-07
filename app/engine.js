@@ -43,7 +43,8 @@ define(function () {
     function go() {
         var gameTimeStamp = new Date().getTime() - this.startTimeStamp,
             dt = gameTimeStamp - this.previousTimeStamp,
-            fpsElapsed = gameTimeStamp - this.fps.startTimeStamp;
+            fpsElapsed = gameTimeStamp - this.fps.startTimeStamp,
+            keepGoing;
 
         this.previousTimeStamp = gameTimeStamp;
 
@@ -56,9 +57,13 @@ define(function () {
             this.fps.startTimeStamp = gameTimeStamp;
         }
 
-        this.options.update.call(this.options.context, dt, gameTimeStamp, this.fps.fps, keypressQueue);
+        keepGoing = this.options.update.call(this.options.context, dt, gameTimeStamp, this.fps.fps, keypressQueue);
         keypressQueue = [];
-        requestAnimationFrame(this.go);
+        if (keepGoing) {
+            requestAnimationFrame(this.go);
+        } else {
+            this.options.stop.call(this.options.context);
+        }
     }
 
     function keypress(which) {
