@@ -7,12 +7,6 @@ define(['jquery', 'star'], function ($, Star) {
         LEFT = 97,
         RIGHT = 100,
         DOWN = 115,
-        directions = {
-            d119: 'Above',
-            d97: 'LeftOf',
-            d100: 'RightOf',
-            d115: 'Below'
-        },
         abs = Math.abs;
 
     return {
@@ -163,8 +157,7 @@ define(['jquery', 'star'], function ($, Star) {
             star: undefined,
             distance: undefined
             },
-            distance,
-            directionMethod;
+            distance;
 
         $.each(stars, function(index, candidate) {
             switch (direction) {
@@ -172,10 +165,9 @@ define(['jquery', 'star'], function ($, Star) {
             case LEFT:
             case DOWN:
             case RIGHT:
-                directionMethod = directions['d' + direction];
-                if (candidate['is' + directionMethod](star)) {
-                    distance = candidate['distance' + directionMethod](star);
-                    assignClosest(closest, candidate, distance);
+                if (candidate.is(direction, star)) {
+                    distance = candidate.distance(direction, star);
+                        assignClosest(closest, candidate, distance);
                 }
                 break;
             }
