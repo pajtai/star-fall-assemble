@@ -14,6 +14,7 @@ define(function () {
         RIGHT = 100,
         DOWN = 115;
 
+
     /**
      * Gets a random int between min and max inclussive.
      * @param min
@@ -34,6 +35,10 @@ define(function () {
         return random() * (max - min) + min;
     }
 
+    Star.minSpeed = 0.1;
+    Star.maxSpeed = 1;
+    Star.minStarWidth = 5;
+    Star.maxStarWidth = 10;
     function Star (maxWidth, maxHeight, focused, x, y, w, s) {
         var moveRight;
 
@@ -46,10 +51,10 @@ define(function () {
         moveRight = random() > 0.5;
         this.x = undefined !== x ? x : (moveRight ? 0 : maxWidth);
         this.y = undefined !== y ? y : getRandomInt(0, maxHeight);
-        this.width = undefined !== w ? w : getRandomInt(5,10);
+        this.width = undefined !== w ? w : getRandomInt(Star.minStarWidth, Star.maxStarWidth);
         this.setOppositeCornerCoordinates();
         this.direction = 0;
-        this.speed = undefined !== s ? s : ((moveRight ? 1 : -1) * getRandomArbitrary(0.1,1));
+        this.speed = undefined !== s ? s : ((moveRight ? 1 : -1) * getRandomArbitrary(Star.minSpeed, Star.maxSpeed));
         this.color = focused ? focusColor : blurColor;
         this.alive = true;
         // "this" is automatically returned ~
@@ -117,7 +122,7 @@ define(function () {
         if (star === candidate) {
             return false;
         }
-        if (candidate.y > star.y) {
+        if (candidate.y >= star.y) {
             return false;
         }
         return this.isOnSameVertical(star);
@@ -128,7 +133,7 @@ define(function () {
         if (star === candidate) {
             return false;
         }
-        if (candidate.bottom < star.bottom) {
+        if (candidate.bottom <= star.bottom) {
             return false;
         }
         return this.isOnSameVertical(star);
@@ -139,7 +144,7 @@ define(function () {
         if (star === candidate) {
             return false;
         }
-        if (candidate.x > star.x) {
+        if (candidate.x >= star.x) {
             return false;
         }
         return this.isOnSameHorizon(star);
@@ -150,7 +155,7 @@ define(function () {
         if (star === candidate) {
             return false;
         }
-        if (candidate.right < star.right) {
+        if (candidate.right <= star.right) {
             return false;
         }
         return this.isOnSameHorizon(star);
@@ -200,13 +205,13 @@ define(function () {
      * 1
      * 2
      *
-     *        +---+       +---+
-     * +---+  | s |       |   |
-     * |   |  +---+ +---+ |   |
-     * | c |        | s | | s |
-     * |   |  +---+ +---+ |   |
-     * +---+  | s |       |   |
-     *        +---+       +---+
+     *        +---+
+     * +---+  | s |
+     * |   |  +---+ +---+
+     * | c |        | s |
+     * |   |  +---+ +---+
+     * +---+  | s |
+     *        +---+
      *
      *
      */
@@ -218,13 +223,7 @@ define(function () {
         if (candidate.bottom >= star.y && candidate.bottom <= star.bottom) {
             return true;
         }
-        if (candidate.bottom >= star.bottom && candidate.y <= star.y) {
-            return true;
-        }
-        if (candidate.y >= star.y && candidate.bottom <= star.bottom) {
-            return true;
-        }
-        return false;
+        return (candidate.bottom >= star.bottom && candidate.y <= star.y);
     }
 
     /**
@@ -245,10 +244,6 @@ define(function () {
      *            | s |
      *            +---+
      *
-     *        +------------+
-     *        |     s      |
-     *        +------------+
-     *
      */
     Star.prototype.isOnSameVertical = function(star) {
         var candidate = this;
@@ -258,13 +253,7 @@ define(function () {
         if (candidate.right >= star.x && candidate.right <= star.right) {
             return true;
         }
-        if (candidate.x <= star.x && candidate.right >= star.right) {
-            return true;
-        }
-        if (candidate.x >= star.x && candidate.right <= star.right) {
-            return true;
-        }
-        return false;
+        return (candidate.x <= star.x && candidate.right >= star.right);
     };
 
     return Star;

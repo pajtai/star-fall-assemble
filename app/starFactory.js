@@ -8,7 +8,8 @@ define(['jquery', 'star'], function ($, Star) {
         LEFT = 97,
         RIGHT = 100,
         DOWN = 115,
-        abs = Math.abs;
+        abs = Math.abs,
+        testMode = false;
 
     // TODO: create a star manager
     return {
@@ -58,12 +59,14 @@ define(['jquery', 'star'], function ($, Star) {
                 collisions.push(collision[1]);
                 star1 = stars[collision[0]];
                 star2 = stars[collision[1]]
-                star1.stop().kill();
-                star2.stop().kill();
+                star1.stop();
+                star2.stop();
             });
         }
 
-        remove = remove.concat(collisions);
+        if (!testMode) {
+            remove = remove.concat(collisions);
+        }
         // Sorting is needed so that the splices don't remove the wrong items ~
         remove.sort(function (a, b) {
             return b > a;
