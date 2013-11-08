@@ -50,6 +50,9 @@ define(['jquery', 'engine', 'starFactory'], function ($, engine, StarFactory) {
             0
         ));
 
+        setTimeout(function() {
+            $('#instructions').remove();
+        }, 4000);
         this.listenToKeys();
     }
 

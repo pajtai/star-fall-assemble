@@ -17,11 +17,19 @@
                 top: 0;
                 right: 0;
             }
+            #instructions {
+                position: absolute;
+                top: 0;
+                left: 0;
+                color:#FFFFFF;
+                background-color: #000000;
+            }
         </style>
     </head>
     <body>
         <canvas id="game"></canvas>
         <div id="fps">0</div>
+        <div id="instructions"><h2>"w", "a", "s", "d" to jump focus</h2></div>
         <script data-main="main" src="vendor/requirejs/require.js"></script>
     </body>
 </html>
