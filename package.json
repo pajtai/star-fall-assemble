@@ -1,26 +1,25 @@
 {
-  "name": "deferredStateMachine",
-  "version": "0.0.3",
-  "description": "A finited state machine implemented using jQuery Deferred",
+  "name": "starFallAssemble",
+  "version": "0.0.4",
+  "description": "A 2d JavaScript game using canvas",
   "main": " ",
   "scripts": {
     "test": "grunt testServer"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Solid-Interactive/deferred-state-machine.git"
+    "url": "https://github.com/pajtai/star-fall-assemble"
   },
   "keywords": [
-    "jquery",
-    "deferred",
-    "finite state machine",
-    "bower"
+    "javascript",
+    "canvas",
+    "game"
   ],
-  "author": "SOLID Interactive",
+  "author": "Peter Ajtai",
   "license": "MIT",
   "readmeFilename": "README.md",
   "bugs": {
-    "url": "https://github.com/Solid-Interactive/deferred-state-machine/issues"
+    "url": "https://github.com/pajtai/star-fall-assemble/issues"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
