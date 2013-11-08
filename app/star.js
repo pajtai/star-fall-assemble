@@ -12,7 +12,16 @@ define(function () {
         UP = 119,
         LEFT = 97,
         RIGHT = 100,
-        DOWN = 115;
+        DOWN = 115,
+        // Create a cache of off screen canvases for performance
+        // http://www.html5rocks.com/en/tutorials/canvas/performance/
+        canvasCache = {
+            cSample : {
+                canvas : {},
+                context : {}
+            }
+        },
+        cachePrefix = 'c';
 
 
     /**
@@ -40,7 +49,10 @@ define(function () {
     Star.minStarWidth = 5;
     Star.maxStarWidth = 10;
     function Star (maxWidth, maxHeight, focused, x, y, w, s) {
-        var moveRight;
+        var moveRight,
+            cacheObj,
+            canvas,
+            context;
 
         if (!(this instanceof Star)) {
             return new Star(maxWidth, maxHeight);
@@ -57,8 +69,49 @@ define(function () {
         this.speed = undefined !== s ? s : ((moveRight ? 1 : -1) * getRandomArbitrary(Star.minSpeed, Star.maxSpeed));
         this.color = focused ? focusColor : blurColor;
         this.alive = true;
+
+        cacheObj = canvasCache[this.getCacheKey()];
+        if (!cacheObj) {
+            canvasCache[this.getCacheKey()] = this.createCachedCanvas();
+        }
         // "this" is automatically returned ~
     }
+
+    Star.prototype.createCachedCanvas = function() {
+        var canvas = document.createElement('canvas'),
+            context,
+            canvasCache;
+
+        canvas.width = this.width;
+        canvas.height = this.width;
+        context = canvas.getContext('2d');
+        context.fillStyle = this.color;
+        context.fillRect(0,0,this.width,this.width);
+        return {
+            canvas: canvas,
+            context: context
+        };
+    };
+
+
+    Star.prototype.getCachedCanvas = function() {
+
+        var key = this.getCacheKey(),
+            cachedObj = canvasCache[key];
+
+        if (!cachedObj) {
+            cachedObj = canvasCache[key] = this.createCachedCanvas();
+        }
+        return cachedObj.canvas;
+    };
+
+    Star.prototype.drawOn = function(context) {
+        context.drawImage(this.getCachedCanvas(), floor(this.x), floor(this.y));
+    };
+
+    Star.prototype.getCacheKey = function() {
+        return cachePrefix + this.width + this.color.replace('#','');
+    };
 
     // TODO: make stars movement depend on dt and not ticks
     Star.prototype.move = function () {

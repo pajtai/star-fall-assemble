@@ -14,7 +14,6 @@ define(['jquery', 'engine', 'starFactory'], function ($, engine, StarFactory) {
         beginFalling : beginFalling,
         update : update,
         clear : clear,
-        drawRect : drawRect,
         previousFps : 0,
         starIntervalMs : 200,
         nextStarInterval : 0,
@@ -76,7 +75,7 @@ define(['jquery', 'engine', 'starFactory'], function ($, engine, StarFactory) {
         this.clear();
         StarFactory.updateStars(dt, gameTimeStamp);
         StarFactory.each(function (index, item) {
-            self.drawRect(item);
+            item.drawOn(self.context);
         });
         if (gameTimeStamp >= this.nextStarInterval) {
             this.createNewStar();
@@ -90,14 +89,6 @@ define(['jquery', 'engine', 'starFactory'], function ($, engine, StarFactory) {
     function createNewStar (focused, x, y, w, s) {
         this.nextStarInterval += this.starIntervalMs;
         return StarFactory.createStar(focused, x, y, w, s);
-    }
-
-    function drawRect (item) {
-        this.context.fillStyle = item.color;
-        this.context.fillRect(floor(item.x),
-            floor(item.y),
-            item.width,
-            item.width);
     }
 
     function clear () {
