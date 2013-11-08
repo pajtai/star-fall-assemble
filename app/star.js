@@ -1,20 +1,26 @@
 /*global define:false */
-define(function () {
+define(['jquery'], function ($) {
     'use strict';
 
     // TODO: create array of different sized star canvases
     var random = Math.random,
         floor = Math.floor,
         abs = Math.abs,
+        sin = Math.sin,
+        cos = Math.cos,
         pi = Math.PI,
+        pi_0_0 = 0,
+        pi_0_5 = 0.5 * pi,
+        pi_1_0 = pi,
+        pi_1_5 = 1.5 * pi,
         focusColor = '#FF0000',
         blurColor = '#0000FF',
         UP = 119,
         LEFT = 97,
         RIGHT = 100,
         DOWN = 115,
-        // Create a cache of off screen canvases for performance
-        // http://www.html5rocks.com/en/tutorials/canvas/performance/
+    // Create a cache of off screen canvases for performance
+    // http://www.html5rocks.com/en/tutorials/canvas/performance/
         canvasCache = {
             cSample : {
                 canvas : {},
@@ -30,7 +36,7 @@ define(function () {
      * @param max
      * @returns {number}
      */
-    function getRandomInt(min, max) {
+    function getRandomInt (min, max) {
         return floor(random() * (max - min + 1) + min);
     }
 
@@ -40,7 +46,7 @@ define(function () {
      * @param max
      * @returns {number}
      */
-    function getRandomArbitrary(min, max) {
+    function getRandomArbitrary (min, max) {
         return random() * (max - min) + min;
     }
 
@@ -49,7 +55,7 @@ define(function () {
     Star.minStarWidth = 5;
     Star.maxStarWidth = 10;
     function Star (maxWidth, maxHeight, focused, x, y, w, s) {
-        var moveRight,
+        var moveDirection,
             cacheObj,
             canvas,
             context;
@@ -60,13 +66,14 @@ define(function () {
 
         this.maxWidth = maxWidth;
         this.maxHeight = maxHeight;
-        moveRight = random() > 0.5;
-        this.x = undefined !== x ? x : (moveRight ? 0 : maxWidth);
-        this.y = undefined !== y ? y : getRandomInt(0, maxHeight);
+
+        // Pick a cardinal radian direction from 0 to 2pi
+        this.directionRad = pi * (getRandomInt(0, 3) / 2);
         this.width = undefined !== w ? w : getRandomInt(Star.minStarWidth, Star.maxStarWidth);
+        this.x = undefined !== x ? x : this.getInitialX();
+        this.y = undefined !== y ? y : this.getInitialY();
         this.setOppositeCornerCoordinates();
-        this.direction = 0;
-        this.speed = undefined !== s ? s : ((moveRight ? 1 : -1) * getRandomArbitrary(Star.minSpeed, Star.maxSpeed));
+        this.speed = undefined !== s ? s : (getRandomArbitrary(Star.minSpeed, Star.maxSpeed));
         this.color = focused ? focusColor : blurColor;
         this.alive = true;
 
@@ -77,7 +84,36 @@ define(function () {
         // "this" is automatically returned ~
     }
 
-    Star.prototype.createCachedCanvas = function() {
+    Star.prototype.getInitialX = function () {
+        switch (this.directionRad) {
+        case pi_0_0:
+            return 0;
+        case pi_1_0:
+            return this.maxWidth;
+        case pi_0_5:
+        case pi_1_5:
+            return getRandomInt(0, this.maxWidth - this.width);
+        default:
+            console.log("no initial x: " + this.directionRad/pi);
+        }
+    };
+
+    Star.prototype.getInitialY = function () {
+        switch (this.directionRad) {
+        case pi_0_0:
+        case pi_1_0:
+            return getRandomInt(0, this.maxHeight - this.width);
+        case pi_0_5:
+            return this.maxHeight;
+        case pi_1_5:
+            return 0;
+        default:
+            console.log("no initial y: " + this.directionRad/pi);
+            return -1;
+        }
+    };
+
+    Star.prototype.createCachedCanvas = function () {
         var canvas = document.createElement('canvas'),
             context,
             canvasCache;
@@ -86,15 +122,15 @@ define(function () {
         canvas.height = this.width;
         context = canvas.getContext('2d');
         context.fillStyle = this.color;
-        context.fillRect(0,0,this.width,this.width);
+        context.fillRect(0, 0, this.width, this.width);
         return {
-            canvas: canvas,
-            context: context
+            canvas : canvas,
+            context : context
         };
     };
 
 
-    Star.prototype.getCachedCanvas = function() {
+    Star.prototype.getCachedCanvas = function () {
 
         var key = this.getCacheKey(),
             cachedObj = canvasCache[key];
@@ -105,20 +141,34 @@ define(function () {
         return cachedObj.canvas;
     };
 
-    Star.prototype.drawOn = function(context) {
+    Star.prototype.drawOn = function (context) {
         context.drawImage(this.getCachedCanvas(), floor(this.x), floor(this.y));
     };
 
-    Star.prototype.getCacheKey = function() {
-        return cachePrefix + this.width + this.color.replace('#','');
+    Star.prototype.getCacheKey = function () {
+        return cachePrefix + this.width + this.color.replace('#', '');
     };
 
     // TODO: make stars movement depend on dt and not ticks
     Star.prototype.move = function () {
         var showing = true;
-        this.x = this.x + this.speed;
+        switch (this.directionRad) {
+        case pi_0_0:
+            this.x += this.speed;
+            break;
+        case pi_1_5:
+            this.y += this.speed;
+            break;
+        case pi_1_0:
+            this.x -= this.speed;
+            break;
+        case pi_0_5:
+            this.y -= this.speed;
+            break;
+        }
         this.setOppositeCornerCoordinates();
-        if (this.x > this.maxWidth || this.right < 0) {
+        if (this.x > this.maxWidth || this.right < 0
+            || this.y > this.maxHeight || this.bottom < 0) {
             showing = false;
             this.kill();
         }
@@ -155,7 +205,7 @@ define(function () {
         return this;
     }
 
-    Star.prototype.is = function(direction, star) {
+    Star.prototype.is = function (direction, star) {
         switch (direction) {
         case UP:
             return this.isAbove(star);
@@ -170,7 +220,7 @@ define(function () {
         }
     }
 
-    Star.prototype.isAbove = function(star) {
+    Star.prototype.isAbove = function (star) {
         var candidate = this;
         if (star === candidate) {
             return false;
@@ -181,7 +231,7 @@ define(function () {
         return this.isOnSameVertical(star);
     };
 
-    Star.prototype.isBelow = function(star) {
+    Star.prototype.isBelow = function (star) {
         var candidate = this;
         if (star === candidate) {
             return false;
@@ -192,7 +242,7 @@ define(function () {
         return this.isOnSameVertical(star);
     };
 
-    Star.prototype.isLeftOf = function(star) {
+    Star.prototype.isLeftOf = function (star) {
         var candidate = this;
         if (star === candidate) {
             return false;
@@ -203,7 +253,7 @@ define(function () {
         return this.isOnSameHorizon(star);
     };
 
-    Star.prototype.isRightOf = function(star) {
+    Star.prototype.isRightOf = function (star) {
         var candidate = this;
         if (star === candidate) {
             return false;
@@ -214,7 +264,7 @@ define(function () {
         return this.isOnSameHorizon(star);
     };
 
-    Star.prototype.distance = function(direction, star) {
+    Star.prototype.distance = function (direction, star) {
         switch (direction) {
         case UP:
             return this.distanceAbove(star);
@@ -268,7 +318,7 @@ define(function () {
      *
      *
      */
-    Star.prototype.isOnSameHorizon = function(star) {
+    Star.prototype.isOnSameHorizon = function (star) {
         var candidate = this;
         if (candidate.y <= star.bottom && candidate.y >= star.y) {
             return true;
@@ -298,7 +348,7 @@ define(function () {
      *            +---+
      *
      */
-    Star.prototype.isOnSameVertical = function(star) {
+    Star.prototype.isOnSameVertical = function (star) {
         var candidate = this;
         if (candidate.x >= star.x && candidate.x <= star.right) {
             return true;
