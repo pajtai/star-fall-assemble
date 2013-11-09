@@ -1,5 +1,5 @@
 /*global define:false */
-define(['jquery'], function ($) {
+define(['jquery', 'config'], function ($, config) {
     'use strict';
 
     // TODO: create array of different sized star canvases
@@ -9,16 +9,16 @@ define(['jquery'], function ($) {
         sin = Math.sin,
         cos = Math.cos,
         pi = Math.PI,
-        pi_0_0 = 0,
-        pi_0_5 = 0.5 * pi,
-        pi_1_0 = pi,
-        pi_1_5 = 1.5 * pi,
+        pi_0_0 = config.pi_0_0,
+        pi_0_5 = config.pi_0_5,
+        pi_1_0 = config.pi_1_0,
+        pi_1_5 = config.pi_1_5,
         focusColor = '#FF0000',
         blurColor = '#0000FF',
-        UP = 119,
-        LEFT = 97,
-        RIGHT = 100,
-        DOWN = 115,
+        UP = config.UP,
+        LEFT = config.LEFT,
+        RIGHT = config.RIGHT,
+        DOWN = config.DOWN,
     // Create a cache of off screen canvases for performance
     // http://www.html5rocks.com/en/tutorials/canvas/performance/
         canvasCache = {
@@ -54,7 +54,8 @@ define(['jquery'], function ($) {
     Star.maxSpeed = 1;
     Star.minStarWidth = 5;
     Star.maxStarWidth = 10;
-    function Star (maxWidth, maxHeight, focused, x, y, w, s) {
+    // TODO: create typeofstar arguments
+    function Star (maxWidth, maxHeight, focused, x, y, w, s, c, d) {
         var moveDirection,
             cacheObj,
             canvas,
@@ -68,13 +69,17 @@ define(['jquery'], function ($) {
         this.maxHeight = maxHeight;
 
         // Pick a cardinal radian direction from 0 to 2pi
-        this.directionRad = pi * (getRandomInt(0, 3) / 2);
+        this.directionRad = undefined === d ? pi * (getRandomInt(0, 3) / 2) : d;
         this.width = undefined !== w ? w : getRandomInt(Star.minStarWidth, Star.maxStarWidth);
         this.x = undefined !== x ? x : this.getInitialX();
         this.y = undefined !== y ? y : this.getInitialY();
         this.setOppositeCornerCoordinates();
         this.speed = undefined !== s ? s : (getRandomArbitrary(Star.minSpeed, Star.maxSpeed));
-        this.color = focused ? focusColor : blurColor;
+        if (focused) {
+            this.color = focusColor;
+        } else {
+            this.color = c ? c : blurColor;
+        }
         this.alive = true;
 
         cacheObj = canvasCache[this.getCacheKey()];
