@@ -1,13 +1,16 @@
 /*global define:false */
-define(['jquery', 'engine', 'starFactory'], function ($, engine, StarFactory) {
+define(['jquery', 'engine', 'starFactory', 'config'], function ($, engine, StarFactory, config) {
     'use strict';
 
     // TODO: move directions into config file
-    var UP = 119,
-        LEFT = 97,
-        RIGHT = 100,
-        DOWN = 115,
-        floor = Math.floor;
+    var UP = config.UP,
+        LEFT = config.LEFT,
+        RIGHT = config.RIGHT,
+        DOWN = config.DOWN,
+        SHOOT_UP = config.SHOOT_UP,
+        SHOOT_LEFT = config.SHOOT_LEFT,
+        SHOOT_RIGHT = config.SHOOT_RIGHT,
+        SHOOT_DOWN = config.SHOOT_DOWN;
 
     return {
         stars : [],
@@ -20,6 +23,7 @@ define(['jquery', 'engine', 'starFactory'], function ($, engine, StarFactory) {
         createNewStar : createNewStar,
         listenToKeys : listenToKeys,
         move : move,
+        shoot : shoot,
         stop : stop
     };
 
@@ -66,12 +70,20 @@ define(['jquery', 'engine', 'starFactory'], function ($, engine, StarFactory) {
         }
 
         if (keypresses.length) {
-            switch (direction = keypresses[0]) {
+            switch (direction = keypresses[0].which) {
             case UP:
             case LEFT:
             case DOWN:
             case RIGHT:
+                keypresses[0].preventDefault();
                 this.move(direction);
+                break;
+            case SHOOT_UP:
+            case SHOOT_LEFT:
+            case SHOOT_DOWN:
+            case SHOOT_RIGHT:
+                keypresses[0].preventDefault();
+                this.shoot(direction);
                 break;
             }
         }
@@ -99,14 +111,15 @@ define(['jquery', 'engine', 'starFactory'], function ($, engine, StarFactory) {
     }
 
     function listenToKeys () {
-        $('body').keypress(function (event) {
-            engine.keypress(event.which);
-        });
+            $('body').keydown(function (event) {
+                engine.keypress(event);
+            });
     }
 
     function move (direction) {
-        var player = StarFactory.getPlayer();
-        var closest = StarFactory.closestToThe(player, direction);
+        var player = StarFactory.getPlayer(),
+            closest = StarFactory.closestToThe(player, direction);
+
         if (closest) {
             player.blur();
             if (player.isAlive()) {
@@ -114,6 +127,10 @@ define(['jquery', 'engine', 'starFactory'], function ($, engine, StarFactory) {
                 closest.focus();
             }
         }
+    }
+
+    function shoot (direction) {
+        StarFactory.shootFrom(StarFactory.getPlayer(), direction);
     }
 
     function stop () {

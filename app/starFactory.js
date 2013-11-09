@@ -1,15 +1,24 @@
 /*global define:false */
-define(['jquery', 'star'], function ($, Star) {
+define(['jquery', 'star', 'config'], function ($, Star, config) {
     'use strict';
 
     var stars = [],
         player,
-        UP = 119,
-        LEFT = 97,
-        RIGHT = 100,
-        DOWN = 115,
-        abs = Math.abs,
-        testMode = false;
+        UP = config.UP,
+        LEFT = config.LEFT,
+        RIGHT = config.RIGHT,
+        DOWN = config.DOWN,
+        SHOOT_UP = config.SHOOT_UP,
+        SHOOT_LEFT = config.SHOOT_LEFT,
+        SHOOT_RIGHT = config.SHOOT_RIGHT,
+        SHOOT_DOWN = config.SHOOT_DOWN,
+        pi_0_0 = config.pi_0_0,
+        pi_0_5 = config.pi_0_5,
+        pi_1_0 = config.pi_1_0,
+        pi_1_5 = config.pi_1_5,
+        testMode = false,
+        floor = Math.floor,
+        ceil = Math.ceil;
 
     // TODO: create a star manager
     return {
@@ -22,7 +31,8 @@ define(['jquery', 'star'], function ($, Star) {
         collisionsInList : collisionsInList,
         closestToThe : closestToThe,
         setPlayer : setPlayer,
-        getPlayer : getPlayer
+        getPlayer : getPlayer,
+        shootFrom : shootFrom
     };
 
     function loadContext (context) {
@@ -34,8 +44,8 @@ define(['jquery', 'star'], function ($, Star) {
         this.maxHeight = maxHeight;
     }
 
-    function createStar (focused, x, y, w, s) {
-        var star = new Star(this.maxWidth, this.maxHeight, focused, x, y, w, s);
+    function createStar (focused, x, y, w, s, c, d) {
+        var star = new Star(this.maxWidth, this.maxHeight, focused, x, y, w, s, c, d);
         stars.push(star);
         return star;
     }
@@ -194,5 +204,48 @@ define(['jquery', 'star'], function ($, Star) {
 
     function getPlayer() {
         return player;
+    }
+
+    function shootFrom(player, direction) {
+        var width = 5;
+        // TODO: replace hard coded color with type - bullet
+        switch (direction) {
+        case SHOOT_UP:
+            this.createStar(false
+                , floor(player.x + player.width/2 - width/2)
+                , floor(player.y - width)
+                , width
+                , 1
+                , "#00FF00"
+                , pi_0_5);
+            break;
+        case SHOOT_DOWN:
+            this.createStar(false
+                , floor(player.x + player.width/2 - width/2)
+                , ceil(player.bottom)
+                , width
+                , 1
+                , "#00FF00"
+                , pi_1_5);
+            break;
+        case SHOOT_LEFT:
+            this.createStar(false
+                , floor(player.x - player.width)
+                , floor(player.y + player.width/2 - width/2)
+                , width
+                , 1
+                , "#00FF00"
+                , pi_1_0);
+            break;
+        case SHOOT_RIGHT:
+            this.createStar(false
+                , ceil(player.right)
+                , floor(player.y + player.width/2 - width/2)
+                , width
+                , 1
+                , "#00FF00"
+                , pi_0_0);
+            break;
+        }
     }
 });

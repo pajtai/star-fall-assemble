@@ -66,7 +66,7 @@ define(function () {
         }
     }
 
-    function keypress(which) {
-        keypressQueue.push(which);
+    function keypress(event) {
+        keypressQueue.push(event);
     }
 });
