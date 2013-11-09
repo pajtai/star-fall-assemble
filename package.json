@@ -1,6 +1,6 @@
 {
   "name": "starFallAssemble",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A 2d JavaScript game using canvas",
   "main": " ",
   "scripts": {
