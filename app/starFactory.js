@@ -57,7 +57,7 @@ define(['jquery', 'star', 'config'], function ($, Star, config) {
             doneIndices = [];
 
         $.each(stars, function (index, star) {
-            if (!star.move()) {
+            if (!star.move(dt)) {
                 remove.push(index);
             }
         });
@@ -207,7 +207,8 @@ define(['jquery', 'star', 'config'], function ($, Star, config) {
     }
 
     function shootFrom(player, direction) {
-        var width = 5;
+        var width = 5,
+            speed = 0.1;
         // TODO: replace hard coded color with type - bullet
         switch (direction) {
         case SHOOT_UP:
@@ -215,7 +216,7 @@ define(['jquery', 'star', 'config'], function ($, Star, config) {
                 , floor(player.x + player.width/2 - width/2)
                 , floor(player.y - width)
                 , width
-                , 1
+                , speed
                 , "#00FF00"
                 , pi_0_5);
             break;
@@ -224,7 +225,7 @@ define(['jquery', 'star', 'config'], function ($, Star, config) {
                 , floor(player.x + player.width/2 - width/2)
                 , ceil(player.bottom)
                 , width
-                , 1
+                , speed
                 , "#00FF00"
                 , pi_1_5);
             break;
@@ -233,7 +234,7 @@ define(['jquery', 'star', 'config'], function ($, Star, config) {
                 , floor(player.x - player.width)
                 , floor(player.y + player.width/2 - width/2)
                 , width
-                , 1
+                , speed
                 , "#00FF00"
                 , pi_1_0);
             break;
@@ -242,7 +243,7 @@ define(['jquery', 'star', 'config'], function ($, Star, config) {
                 , ceil(player.right)
                 , floor(player.y + player.width/2 - width/2)
                 , width
-                , 1
+                , speed
                 , "#00FF00"
                 , pi_0_0);
             break;
