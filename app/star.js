@@ -50,8 +50,8 @@ define(['jquery', 'config'], function ($, config) {
         return random() * (max - min) + min;
     }
 
-    Star.minSpeed = 0.1;
-    Star.maxSpeed = 1;
+    Star.minSpeed = 0.01;
+    Star.maxSpeed = 0.05;
     Star.minStarWidth = 5;
     Star.maxStarWidth = 10;
     // TODO: create typeofstar arguments
@@ -155,20 +155,20 @@ define(['jquery', 'config'], function ($, config) {
     };
 
     // TODO: make stars movement depend on dt and not ticks
-    Star.prototype.move = function () {
+    Star.prototype.move = function (dt) {
         var showing = true;
         switch (this.directionRad) {
         case pi_0_0:
-            this.x += this.speed;
+            this.x += dt * this.speed;
             break;
         case pi_1_5:
-            this.y += this.speed;
+            this.y += dt * this.speed;
             break;
         case pi_1_0:
-            this.x -= this.speed;
+            this.x -= dt * this.speed;
             break;
         case pi_0_5:
-            this.y -= this.speed;
+            this.y -= dt * this.speed;
             break;
         }
         this.setOppositeCornerCoordinates();

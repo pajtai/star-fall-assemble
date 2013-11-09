@@ -19,18 +19,27 @@
             }
             #instructions {
                 position: absolute;
-                top: 0;
+                bottom: 0;
                 left: 0;
                 color:#FFFFFF;
                 background-color: #000000;
+            }
+            #score {
+                position: absolute;
+                top: 0;
+                left: 0;
+                color:#FFFFFF;
+                background-color: #00FF00;
+                padding:3px;
             }
         </style>
     </head>
     <body>
         <canvas id="game"></canvas>
         <div id="fps">0</div>
-        <div id="instructions"><h2>UP, DOWN, LEFT, RIGHT to jump focus<br/>
-            "w", "a", "s", "d to shoot</h2></div>
+        <div id="instructions"><h3>UP, DOWN, LEFT, RIGHT to jump focus<br/>
+            "w", "a", "s", "d to shoot</h3></div>
+        <div id="score">0000</div>
         <script data-main="main" src="vendor/requirejs/require.js"></script>
     </body>
 </html>

@@ -30,6 +30,10 @@ define(['jquery', 'engine', 'starFactory', 'config'], function ($, engine, StarF
     function beginFalling () {
         var $game = $('#game'),
             width = 10;
+        this.$score = $('#score');
+        this.score = 0;
+        this.nextScoreInterval = 500;
+        this.nextScoreCounter = 0;
         this.$fps = $('#fps');
         this.canvas = $game.get(0);
         this.size = {
@@ -56,7 +60,7 @@ define(['jquery', 'engine', 'starFactory', 'config'], function ($, engine, StarF
 
         setTimeout(function() {
             $('#instructions').remove();
-        }, 4000);
+        }, 3000);
         this.listenToKeys();
     }
 
@@ -64,6 +68,18 @@ define(['jquery', 'engine', 'starFactory', 'config'], function ($, engine, StarF
         var self = this,
             direction,
             player;
+
+        this.score = this.score + dt;
+        this.nextScoreCounter = this.nextScoreCounter + dt;
+        console.log('---');
+        console.log(dt);
+        console.log(this.score);
+        console.log(this.nextScoreInterval);
+        console.log(this.nextScoreCounter);
+        if (this.nextScoreInterval < this.nextScoreCounter) {
+            this.$score.text(this.score);
+            this.nextScoreCounter = 0;
+        }
 
         if (this.previousFps != fps) {
             this.$fps.html(fps);

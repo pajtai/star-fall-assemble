@@ -57,6 +57,9 @@ define(function () {
             this.fps.startTimeStamp = gameTimeStamp;
         }
 
+        if (dt < 0) {
+            dt = 0;
+        }
         keepGoing = this.options.update.call(this.options.context, dt, gameTimeStamp, this.fps.fps, keypressQueue);
         keypressQueue = [];
         if (keepGoing) {
