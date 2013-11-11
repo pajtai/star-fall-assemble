@@ -1,12 +1,12 @@
 /**
- * Lo-Dash 2.2.1 (Custom Build) <http://lodash.com/>
+ * Lo-Dash 2.3.0 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize exports="amd" -o ./compat/`
  * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.5.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <http://lodash.com/license>
  */
-define(['./arrays', './chaining', './collections', './functions', './objects', './utilities', './internals/baseEach', './objects/forOwn', './objects/isArray', './internals/lodashWrapper', './utilities/mixin', './support'], function(arrays, chaining, collections, functions, objects, utilities, baseEach, forOwn, isArray, lodashWrapper, mixin, support) {
+define(['./arrays', './chaining', './collections', './functions', './objects', './utilities', './internals/baseEach', './objects/forOwn', './objects/isArray', './internals/lodashWrapper', './utilities/mixin', './support', './utilities/templateSettings'], function(arrays, chaining, collections, functions, objects, utilities, baseEach, forOwn, isArray, lodashWrapper, mixin, support, templateSettings) {
 
   /**
    * Used for `Array` method references.
@@ -36,15 +36,16 @@ define(['./arrays', './chaining', './collections', './functions', './objects', '
    *
    * The chainable wrapper functions are:
    * `after`, `assign`, `bind`, `bindAll`, `bindKey`, `chain`, `compact`,
-   * `compose`, `concat`, `countBy`, `createCallback`, `curry`, `debounce`,
-   * `defaults`, `defer`, `delay`, `difference`, `filter`, `flatten`, `forEach`,
-   * `forEachRight`, `forIn`, `forInRight`, `forOwn`, `forOwnRight`, `functions`,
-   * `groupBy`, `indexBy`, `initial`, `intersection`, `invert`, `invoke`, `keys`,
-   * `map`, `max`, `memoize`, `merge`, `min`, `object`, `omit`, `once`, `pairs`,
-   * `partial`, `partialRight`, `pick`, `pluck`, `pull`, `push`, `range`, `reject`,
-   * `remove`, `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`, `splice`,
-   * `tap`, `throttle`, `times`, `toArray`, `transform`, `union`, `uniq`, `unshift`,
-   * `unzip`, `values`, `where`, `without`, `wrap`, and `zip`
+   * `compose`, `concat`, `countBy`, `create`, `createCallback`, `curry`,
+   * `debounce`, `defaults`, `defer`, `delay`, `difference`, `filter`, `flatten`,
+   * `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`, `forOwnRight`,
+   * `functions`, `groupBy`, `indexBy`, `initial`, `intersection`, `invert`,
+   * `invoke`, `keys`, `map`, `max`, `memoize`, `merge`, `min`, `object`, `omit`,
+   * `once`, `pairs`, `partial`, `partialRight`, `pick`, `pluck`, `pull`, `push`,
+   * `range`, `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`, `sort`,
+   * `sortBy`, `splice`, `tap`, `throttle`, `times`, `toArray`, `transform`,
+   * `union`, `uniq`, `unshift`, `unzip`, `values`, `where`, `without`, `wrap`,
+   * and `zip`
    *
    * The non-chainable wrapper functions are:
    * `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`, `findIndex`,
@@ -118,6 +119,7 @@ define(['./arrays', './chaining', './collections', './functions', './objects', '
   lodash.compact = arrays.compact;
   lodash.compose = functions.compose;
   lodash.countBy = collections.countBy;
+  lodash.create = objects.create;
   lodash.createCallback = functions.createCallback;
   lodash.curry = functions.curry;
   lodash.debounce = functions.debounce;
@@ -131,7 +133,7 @@ define(['./arrays', './chaining', './collections', './functions', './objects', '
   lodash.forEachRight = collections.forEachRight;
   lodash.forIn = objects.forIn;
   lodash.forInRight = objects.forInRight;
-  lodash.forOwn = objects.forOwn;
+  lodash.forOwn = forOwn;
   lodash.forOwnRight = objects.forOwnRight;
   lodash.functions = objects.functions;
   lodash.groupBy = collections.groupBy;
@@ -206,7 +208,7 @@ define(['./arrays', './chaining', './collections', './functions', './objects', '
   lodash.identity = utilities.identity;
   lodash.indexOf = arrays.indexOf;
   lodash.isArguments = objects.isArguments;
-  lodash.isArray = objects.isArray;
+  lodash.isArray = isArray;
   lodash.isBoolean = objects.isBoolean;
   lodash.isDate = objects.isDate;
   lodash.isElement = objects.isElement;
@@ -223,8 +225,9 @@ define(['./arrays', './chaining', './collections', './functions', './objects', '
   lodash.isString = objects.isString;
   lodash.isUndefined = objects.isUndefined;
   lodash.lastIndexOf = arrays.lastIndexOf;
-  lodash.mixin = utilities.mixin;
+  lodash.mixin = mixin;
   lodash.noConflict = utilities.noConflict;
+  lodash.noop = utilities.noop;
   lodash.parseInt = utilities.parseInt;
   lodash.random = utilities.random;
   lodash.reduce = collections.reduce;
@@ -292,7 +295,7 @@ define(['./arrays', './chaining', './collections', './functions', './objects', '
    * @memberOf _
    * @type string
    */
-  lodash.VERSION = '2.2.1';
+  lodash.VERSION = '2.3.0';
 
   // add "Chaining" functions to the wrapper
   lodash.prototype.chain = chaining.wrapperChain;

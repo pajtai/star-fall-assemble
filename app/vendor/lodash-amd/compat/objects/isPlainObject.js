@@ -1,5 +1,5 @@
 /**
- * Lo-Dash 2.2.1 (Custom Build) <http://lodash.com/>
+ * Lo-Dash 2.3.0 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize exports="amd" -o ./compat/`
  * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.5.2 <http://underscorejs.org/LICENSE>
@@ -14,9 +14,11 @@ define(['./isArguments', '../internals/reNative', '../internals/shimIsPlainObjec
   /** Used for native method references */
   var objectProto = Object.prototype;
 
+  /** Used to resolve the internal [[Class]] of values */
+  var toString = objectProto.toString;
+
   /** Native method shortcuts */
-  var getPrototypeOf = reNative.test(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
-      toString = objectProto.toString;
+  var getPrototypeOf = reNative.test(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf;
 
   /**
    * Checks if `value` is an object created by the `Object` constructor.
@@ -28,18 +30,18 @@ define(['./isArguments', '../internals/reNative', '../internals/shimIsPlainObjec
    * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
    * @example
    *
-   * function Stooge(name, age) {
-   *   this.name = name;
-   *   this.age = age;
+   * function Shape() {
+   *   this.x = 0;
+   *   this.y = 0;
    * }
    *
-   * _.isPlainObject(new Stooge('moe', 40));
+   * _.isPlainObject(new Shape);
    * // => false
    *
    * _.isPlainObject([1, 2, 3]);
    * // => false
    *
-   * _.isPlainObject({ 'name': 'moe', 'age': 40 });
+   * _.isPlainObject({ 'x': 0, 'y': 0 });
    * // => true
    */
   var isPlainObject = !getPrototypeOf ? shimIsPlainObject : function(value) {

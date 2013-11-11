@@ -1,5 +1,5 @@
 /**
- * Lo-Dash 2.2.1 (Custom Build) <http://lodash.com/>
+ * Lo-Dash 2.3.0 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize underscore exports="amd" -o ./underscore/`
  * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.5.2 <http://underscorejs.org/LICENSE>
@@ -10,9 +10,6 @@ define(['../objects/isFunction', '../objects/isObject', '../internals/reNative']
 
   /** Used as a safe reference for `undefined` in pre ES5 environments */
   var undefined;
-
-  /** Used for native method references */
-  var objectProto = Object.prototype;
 
   /** Native method shortcuts */
   var now = reNative.test(now = Date.now) && now || function() { return +new Date; };
@@ -94,6 +91,9 @@ define(['../objects/isFunction', '../objects/isObject', '../internals/reNative']
         if (isCalled) {
           lastCalled = now();
           result = func.apply(thisArg, args);
+          if (!timeoutId && !maxTimeoutId) {
+            args = thisArg = null;
+          }
         }
       } else {
         timeoutId = setTimeout(delayed, remaining);
@@ -108,6 +108,9 @@ define(['../objects/isFunction', '../objects/isObject', '../internals/reNative']
       if (trailing || (maxWait !== wait)) {
         lastCalled = now();
         result = func.apply(thisArg, args);
+        if (!timeoutId && !maxTimeoutId) {
+          args = thisArg = null;
+        }
       }
     };
 
@@ -123,8 +126,10 @@ define(['../objects/isFunction', '../objects/isObject', '../internals/reNative']
         if (!maxTimeoutId && !leading) {
           lastCalled = stamp;
         }
-        var remaining = maxWait - (stamp - lastCalled);
-        if (remaining <= 0) {
+        var remaining = maxWait - (stamp - lastCalled),
+            isCalled = remaining <= 0;
+
+        if (isCalled) {
           if (maxTimeoutId) {
             maxTimeoutId = clearTimeout(maxTimeoutId);
           }
@@ -135,11 +140,18 @@ define(['../objects/isFunction', '../objects/isObject', '../internals/reNative']
           maxTimeoutId = setTimeout(maxDelayed, remaining);
         }
       }
-      if (!timeoutId && wait !== maxWait) {
+      if (isCalled && timeoutId) {
+        timeoutId = clearTimeout(timeoutId);
+      }
+      else if (!timeoutId && wait !== maxWait) {
         timeoutId = setTimeout(delayed, wait);
       }
       if (leadingCall) {
+        isCalled = true;
         result = func.apply(thisArg, args);
+      }
+      if (isCalled && !timeoutId && !maxTimeoutId) {
+        args = thisArg = null;
       }
       return result;
     };

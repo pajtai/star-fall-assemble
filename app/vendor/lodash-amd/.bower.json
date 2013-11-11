@@ -1,14 +1,15 @@
 {
   "name": "lodash-amd",
   "homepage": "https://github.com/lodash/lodash-amd",
-  "version": "2.2.1",
-  "_release": "2.2.1",
+  "version": "2.3.0",
+  "_release": "2.3.0",
   "_resolution": {
     "type": "version",
-    "tag": "2.2.1",
-    "commit": "c4c6d1a8a1bc4335b0f5b33ac45ca6bf84355ac2"
+    "tag": "2.3.0",
+    "commit": "3bb24c2acadf52aad7005983316a9f0fdb1c8687"
   },
   "_source": "git://github.com/lodash/lodash-amd.git",
-  "_target": "*",
-  "_originalSource": "lodash-amd"
+  "_target": "~2.3.0",
+  "_originalSource": "lodash-amd",
+  "_direct": true
 }

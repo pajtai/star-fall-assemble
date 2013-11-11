@@ -1,12 +1,12 @@
 /**
- * Lo-Dash 2.2.1 (Custom Build) <http://lodash.com/>
+ * Lo-Dash 2.3.0 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize exports="amd" -o ./compat/`
  * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.5.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <http://lodash.com/license>
  */
-define(['../internals/baseCreateCallback', '../internals/baseEach', '../internals/createObject', './forOwn', './isArray'], function(baseCreateCallback, baseEach, createObject, forOwn, isArray) {
+define(['../internals/baseCreate', '../internals/baseEach', '../functions/createCallback', './forOwn', './isArray'], function(baseCreate, baseEach, createCallback, forOwn, isArray) {
 
   /**
    * An alternative to `_.reduce` this method transforms `object` to a new
@@ -19,7 +19,7 @@ define(['../internals/baseCreateCallback', '../internals/baseEach', '../internal
    * @static
    * @memberOf _
    * @category Objects
-   * @param {Array|Object} collection The collection to iterate over.
+   * @param {Array|Object} object The object to iterate over.
    * @param {Function} [callback=identity] The function called per iteration.
    * @param {*} [accumulator] The custom accumulator value.
    * @param {*} [thisArg] The `this` binding of `callback`.
@@ -41,8 +41,6 @@ define(['../internals/baseCreateCallback', '../internals/baseEach', '../internal
    */
   function transform(object, callback, accumulator, thisArg) {
     var isArr = isArray(object);
-    callback = baseCreateCallback(callback, thisArg, 4);
-
     if (accumulator == null) {
       if (isArr) {
         accumulator = [];
@@ -50,12 +48,15 @@ define(['../internals/baseCreateCallback', '../internals/baseEach', '../internal
         var ctor = object && object.constructor,
             proto = ctor && ctor.prototype;
 
-        accumulator = createObject(proto);
+        accumulator = baseCreate(proto);
       }
     }
-    (isArr ? baseEach : forOwn)(object, function(value, index, object) {
-      return callback(accumulator, value, index, object);
-    });
+    if (callback) {
+      callback = createCallback(callback, thisArg, 4);
+      (isArr ? baseEach : forOwn)(object, function(value, index, object) {
+        return callback(accumulator, value, index, object);
+      });
+    }
     return accumulator;
   }
 

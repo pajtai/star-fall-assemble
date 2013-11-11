@@ -1,5 +1,5 @@
 /**
- * Lo-Dash 2.2.1 (Custom Build) <http://lodash.com/>
+ * Lo-Dash 2.3.0 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize exports="amd" -o ./compat/`
  * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.5.2 <http://underscorejs.org/LICENSE>
@@ -23,8 +23,8 @@ define([], function() {
    *  corresponding values.
    * @example
    *
-   * _.zipObject(['moe', 'larry'], [30, 40]);
-   * // => { 'moe': 30, 'larry': 40 }
+   * _.zipObject(['fred', 'barney'], [30, 40]);
+   * // => { 'fred': 30, 'barney': 40 }
    */
   function zipObject(keys, values) {
     var index = -1,

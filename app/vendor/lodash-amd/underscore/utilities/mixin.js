@@ -1,5 +1,5 @@
 /**
- * Lo-Dash 2.2.1 (Custom Build) <http://lodash.com/>
+ * Lo-Dash 2.3.0 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize underscore exports="amd" -o ./underscore/`
  * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.5.2 <http://underscorejs.org/LICENSE>
@@ -36,11 +36,11 @@ define(['../collections/forEach', '../objects/functions', '../objects/isFunction
    *   }
    * });
    *
-   * _.capitalize('moe');
-   * // => 'Moe'
+   * _.capitalize('fred');
+   * // => 'Fred'
    *
-   * _('moe').capitalize();
-   * // => 'Moe'
+   * _('fred').capitalize();
+   * // => 'Fred'
    */
   function mixin(object, source) {
     var ctor = object,
