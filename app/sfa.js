@@ -1,7 +1,8 @@
 /*global define:false */
-define(['jquery', 'engine', 'starFactory', 'config'], function ($, engine, StarFactory, config) {
+define(['jquery', 'engine', 'starFactory', 'config', 'touchSwipe'], function ($, engine, StarFactory, config, touchSwipe) {
     'use strict';
 
+    // TODO: why are boxes rectangular if body {height:100%}?
     // TODO: move directions into config file
     var UP = config.UP,
         LEFT = config.LEFT,
@@ -24,7 +25,8 @@ define(['jquery', 'engine', 'starFactory', 'config'], function ($, engine, StarF
         listenToKeys : listenToKeys,
         move : move,
         shoot : shoot,
-        stop : stop
+        stop : stop,
+        getDirectionFromTouch : getDirectionFromTouch
     };
 
     function beginFalling () {
@@ -38,7 +40,9 @@ define(['jquery', 'engine', 'starFactory', 'config'], function ($, engine, StarF
         this.canvas = $game.get(0);
         this.size = {
             width : this.canvas.width,
-            height : this.canvas.height
+            height : this.canvas.height,
+            domWidth : $game.width(),
+            domHeight : $game.height()
         };
         StarFactory.setCanvasSize(this.size.width, this.size.height);
         StarFactory.loadContext(this);
@@ -52,13 +56,13 @@ define(['jquery', 'engine', 'starFactory', 'config'], function ($, engine, StarF
         // TODO: move player somewhere else
         StarFactory.setPlayer(this.createNewStar(
             true,
-            this.size.width/2 - width/2,
-            this.size.height/2 - width/2,
+            this.size.width / 2 - width / 2,
+            this.size.height / 2 - width / 2,
             width,
             0
         ));
 
-        setTimeout(function() {
+        setTimeout(function () {
             $('#instructions').remove();
         }, 3000);
         this.listenToKeys();
@@ -71,11 +75,6 @@ define(['jquery', 'engine', 'starFactory', 'config'], function ($, engine, StarF
 
         this.score = this.score + dt;
         this.nextScoreCounter = this.nextScoreCounter + dt;
-        console.log('---');
-        console.log(dt);
-        console.log(this.score);
-        console.log(this.nextScoreInterval);
-        console.log(this.nextScoreCounter);
         if (this.nextScoreInterval < this.nextScoreCounter) {
             this.$score.text(this.score);
             this.nextScoreCounter = 0;
@@ -127,9 +126,41 @@ define(['jquery', 'engine', 'starFactory', 'config'], function ($, engine, StarF
     }
 
     function listenToKeys () {
-            $('body').keydown(function (event) {
-                engine.keypress(event);
-            });
+        var $body = $('body'),
+            self = this;
+        $body.keydown(function (event) {
+            engine.keypress(event);
+        });
+        $body.swipe({
+            //Generic swipe handler for all directions
+            swipe : function (event, direction, distance, duration, fingerCount) {
+                var swipe = {};
+                swipe.preventDefault = event.preventDefault.bind(event);
+                swipe.which = self.getDirectionFromTouch(event, direction, distance);
+                engine.keypress(swipe);
+            },
+            //Default is 75px, set to 0 for demo so any distance triggers swipe
+            threshold : 10
+        });
+    }
+
+    function getDirectionFromTouch(event, direction, distance) {
+
+        var cutoff = this.size.domWidth / 2;
+        console.log(cutoff);
+        console.log(event.x);
+        switch(direction) {
+        case 'up':
+            return event.x < cutoff ? UP : SHOOT_UP;
+        case 'down':
+            return event.x < cutoff ? DOWN : SHOOT_DOWN;
+        case 'left':
+            return event.x + distance < cutoff ? LEFT : SHOOT_LEFT;
+        case 'right':
+            return event.x - distance < cutoff ? RIGHT : SHOOT_RIGHT;
+        default:
+            return '';
+        }
     }
 
     function move (direction) {

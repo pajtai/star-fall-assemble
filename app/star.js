@@ -2,7 +2,6 @@
 define(['jquery', 'config'], function ($, config) {
     'use strict';
 
-    // TODO: create array of different sized star canvases
     var random = Math.random,
         floor = Math.floor,
         abs = Math.abs,
