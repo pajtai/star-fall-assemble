@@ -4,7 +4,8 @@
     "jquery": "~2.0.3",
     "requirejs": "~2.1.8",
     "deferred-state-machine": "~0.0.4",
-    "lodash-amd": "~2.3.0"
+    "lodash-amd": "~2.3.0",
+    "jquery-touchswipe": "~1.6.5"
   },
   "devDependencies": {
     "mocha": "~1.12.1",
