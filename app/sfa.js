@@ -147,16 +147,15 @@ define(['jquery', 'engine', 'starFactory', 'config', 'touchSwipe'], function ($,
     function getDirectionFromTouch(event, direction, distance) {
 
         var cutoff = this.size.domWidth / 2;
-        alert(event.x);
         switch(direction) {
         case 'up':
-            return event.x < cutoff ? UP : SHOOT_UP;
+            return event.x || event.touches[0].clientX < cutoff ? UP : SHOOT_UP;
         case 'down':
-            return event.x < cutoff ? DOWN : SHOOT_DOWN;
+            return event.x || event.touches[0].clientX < cutoff ? DOWN : SHOOT_DOWN;
         case 'left':
-            return event.x + distance < cutoff ? LEFT : SHOOT_LEFT;
+            return (event.x || event.touches[0].clientX) + distance < cutoff ? LEFT : SHOOT_LEFT;
         case 'right':
-            return event.x - distance < cutoff ? RIGHT : SHOOT_RIGHT;
+            return (event.x || event.touches[0].clientX) - distance < cutoff ? RIGHT : SHOOT_RIGHT;
         default:
             return '';
         }
