@@ -14,7 +14,8 @@ define(function () {
                     setTimeout(callback, defaultFps);
                 });
         }()),
-        keypressQueue = [];
+        keypressQueue = [],
+        touchQueue = [];
 
     return {
         config: config,
@@ -70,6 +71,7 @@ define(function () {
     }
 
     function keypress(event) {
+        // TODO: redo keypress queue to be more generic
         keypressQueue.push(event);
     }
 });
