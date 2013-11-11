@@ -16,7 +16,7 @@ define(['jquery', 'star', 'config'], function ($, Star, config) {
         pi_0_5 = config.pi_0_5,
         pi_1_0 = config.pi_1_0,
         pi_1_5 = config.pi_1_5,
-        testMode = false,
+        testMode = true,
         floor = Math.floor,
         ceil = Math.ceil;
 
