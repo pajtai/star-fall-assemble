@@ -147,6 +147,7 @@ define(['jquery', 'engine', 'starFactory', 'config', 'touchSwipe'], function ($,
     function getDirectionFromTouch(event, direction, distance) {
 
         var cutoff = this.size.domWidth / 2;
+        console.log(event);
         switch(direction) {
         case 'up':
             return event.x || event.touches[0].clientX < cutoff ? UP : SHOOT_UP;
