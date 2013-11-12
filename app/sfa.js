@@ -14,19 +14,19 @@ define(['jquery', 'engine', 'starFactory', 'config', 'touchSwipe'], function ($,
         SHOOT_DOWN = config.SHOOT_DOWN;
 
     return {
-        stars : [],
         beginFalling : beginFalling,
-        update : update,
         clear : clear,
-        previousFps : 0,
-        starIntervalMs : 200,
-        nextStarInterval : 0,
         createNewStar : createNewStar,
+        getDirectionFromTouch : getDirectionFromTouch,
         listenToKeys : listenToKeys,
         move : move,
+        nextStarInterval : 0,
+        previousFps : 0,
+        starIntervalMs : 200,
         shoot : shoot,
+        stars : [],
         stop : stop,
-        getDirectionFromTouch : getDirectionFromTouch
+        update : update
     };
 
     function beginFalling () {
@@ -55,7 +55,7 @@ define(['jquery', 'engine', 'starFactory', 'config', 'touchSwipe'], function ($,
         engine.start();
         // TODO: move player somewhere else
         StarFactory.setPlayer(this.createNewStar(
-            true,
+            StarFactory.PLAYER,
             this.size.width / 2 - width / 2,
             this.size.height / 2 - width / 2,
             width,
@@ -73,12 +73,10 @@ define(['jquery', 'engine', 'starFactory', 'config', 'touchSwipe'], function ($,
             direction,
             player;
 
-        this.score = this.score + dt;
-        this.nextScoreCounter = this.nextScoreCounter + dt;
-        if (this.nextScoreInterval < this.nextScoreCounter) {
-            this.$score.text(this.score);
-            this.nextScoreCounter = 0;
+        if (config.timePassed) {
+            this.score = this.score + (dt * config.points.time);
         }
+        this.nextScoreCounter = this.nextScoreCounter + dt;
 
         if (this.previousFps != fps) {
             this.$fps.html(fps);
@@ -103,7 +101,11 @@ define(['jquery', 'engine', 'starFactory', 'config', 'touchSwipe'], function ($,
             }
         }
         this.clear();
-        StarFactory.updateStars(dt, gameTimeStamp);
+        this.score += StarFactory.updateStars(dt, gameTimeStamp);
+        if (this.nextScoreInterval < this.nextScoreCounter) {
+            this.$score.text(this.score);
+            this.nextScoreCounter = 0;
+        }
         StarFactory.each(function (index, item) {
             item.drawOn(self.context);
         });
@@ -116,9 +118,9 @@ define(['jquery', 'engine', 'starFactory', 'config', 'touchSwipe'], function ($,
     }
 
     // TODO: create attributes object
-    function createNewStar (focused, x, y, w, s) {
+    function createNewStar (starType, x, y, w, s) {
         this.nextStarInterval += this.starIntervalMs;
-        return StarFactory.createStar(focused, x, y, w, s);
+        return StarFactory.createStar(starType || StarFactory.REGULAR, x, y, w, s);
     }
 
     function clear () {
