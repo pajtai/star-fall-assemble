@@ -1,5 +1,5 @@
 /*global define:false */
-define(['star', 'config','lodash'], function (Star, config,_) {
+define(['./star', './config','lodash'], function (Star, config,_) {
     'use strict';
 
     var stars = [],
@@ -22,33 +22,40 @@ define(['star', 'config','lodash'], function (Star, config,_) {
 
     // TODO: create a star manager
     return {
+
         PLAYER: Star.PLAYER,
         BULLET: Star.BULLET,
         REGULAR: Star.REGULAR,
-        loadContext : loadContext,
-        setCanvasSize : setCanvasSize,
-        createStar : createStar,
-        updateStars : updateStars,
-        each : each,
+
+        closestToThe : closestToThe,
         collidesWith : collidesWith,
         collisionsInList : collisionsInList,
-        closestToThe : closestToThe,
-        setPlayer : setPlayer,
+        createStar : createStar,
+        each : each,
         getPlayer : getPlayer,
-        shootFrom : shootFrom
+        loadContext : loadContext,
+        setCamera : setCamera,
+        setPlayer : setPlayer,
+        shootFrom : shootFrom,
+        updateStars : updateStars
     };
 
     function loadContext (context) {
         this.context = context;
     }
 
-    function setCanvasSize (maxWidth, maxHeight) {
-        this.maxWidth = maxWidth;
-        this.maxHeight = maxHeight;
-    }
-
-    function createStar (starType, x, y, w, s, d) {
-        var star = new Star(this.maxWidth, this.maxHeight, starType, x, y, w, s, d);
+    /**
+     * Creates a star on camera
+     * @param starType
+     * @param x
+     * @param y
+     * @param width
+     * @param speed
+     * @param directionRad
+     * @returns {Star}
+     */
+    function createStar (starType, x, y, width, speed, directionRad) {
+        var star = new Star(this.camera, starType, x, y, width, speed, directionRad);
         stars.push(star);
         return star;
     }
@@ -264,5 +271,9 @@ define(['star', 'config','lodash'], function (Star, config,_) {
                 , pi_0_0);
             break;
         }
+    }
+
+    function setCamera(camera) {
+        this.camera = camera;
     }
 });

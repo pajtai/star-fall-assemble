@@ -1,7 +1,11 @@
 /*global define:false */
-define(['config', 'lodash'], function (config, _) {
+define(['./config', 'lodash'], function (config, _) {
     'use strict';
 
+    /**
+     * up is up, down is down, y increases as you move down
+     */
+        
     var random = Math.random,
         floor = Math.floor,
         abs = Math.abs,
@@ -87,26 +91,42 @@ define(['config', 'lodash'], function (config, _) {
     Star.minStarWidth = 5;
     Star.maxStarWidth = 10;
     // TODO: create typeofstar arguments
-    function Star (maxWidth, maxHeight, starType, x, y, w, s, d) {
-        var moveDirection,
-            cacheObj,
-            canvas,
-            context;
+
+    /**
+     *
+     * @param camera
+     * @param starType
+     * @param x - optional override for x
+     * @param y - optional override for y
+     * @param width - optional override for width
+     * @param speed - optional override for speed
+     * @param directionRad - optional override for direction in radians
+     * @returns {Star}
+     * @constructor
+     */
+    function Star (camera, starType, x, y, width, speed, directionRad) {
+        var cacheObj,
+            viewWindow = camera.getViewWindow(),
+            minWidth = viewWindow.x,
+            maxWidth = viewWindow.right,
+            minHeight = viewWindow.y,
+            maxHeight = viewWindow.bottom;
+
 
         if (!(this instanceof Star)) {
-            return new Star(maxWidth, maxHeight);
+            return new Star(viewWindow, starType, x, y, width, speed, directionRad);
         }
 
-        this.maxWidth = maxWidth;
-        this.maxHeight = maxHeight;
+        this.camera = camera;
+
 
         // Pick a cardinal radian direction from 0 to 2pi
-        this.directionRad = undefined === d ? pi * (getRandomInt(0, 3) / 2) : d;
-        this.width = undefined !== w ? w : getRandomInt(Star.minStarWidth, Star.maxStarWidth);
-        this.x = undefined !== x ? x : this.getInitialX();
-        this.y = undefined !== y ? y : this.getInitialY();
+        this.directionRad = undefined === directionRad ? pi * (getRandomInt(0, 3) / 2) : directionRad;
+        this.width = undefined !== width ? width : getRandomInt(Star.minStarWidth, Star.maxStarWidth);
+        this.x = undefined !== x ? x : this.getInitialX(minWidth, maxWidth);
+        this.y = undefined !== y ? y : this.getInitialY(minHeight, maxHeight);
         this.setOppositeCornerCoordinates();
-        switch(starType) {
+        switch (starType) {
         case Star.PLAYER:
             this.color = focusColor;
             break;
@@ -118,7 +138,7 @@ define(['config', 'lodash'], function (config, _) {
             this.color = blurColor;
             break;
         }
-        this.speed = undefined !== s ? s : (getRandomArbitrary(Star.minSpeed, Star.maxSpeed));
+        this.speed = undefined !== speed ? speed : (getRandomArbitrary(Star.minSpeed, Star.maxSpeed));
         this.type = starType;
         this.alive = true;
 
@@ -129,32 +149,33 @@ define(['config', 'lodash'], function (config, _) {
         // 'this' is automatically returned ~
     }
 
-    function getInitialX () {
+    function getInitialX (minX, maxX) {
         switch (this.directionRad) {
         case pi_0_0:
-            return 0;
+            return minX;
         case pi_1_0:
-            return this.maxWidth;
+            return maxX;
         case pi_0_5:
         case pi_1_5:
-            return getRandomInt(0, this.maxWidth - this.width);
+            return getRandomInt(minX, maxX - this.width);
         default:
             console.log('no initial x: ' + this.directionRad / pi);
+            return NaN;
         }
     }
 
-    function getInitialY () {
+    function getInitialY (minY, maxY) {
         switch (this.directionRad) {
         case pi_0_0:
         case pi_1_0:
-            return getRandomInt(0, this.maxHeight - this.width);
+            return getRandomInt(minY, maxY - this.width);
         case pi_0_5:
-            return this.maxHeight;
+            return minY;
         case pi_1_5:
-            return 0;
+            return maxY;
         default:
             console.log('no initial y: ' + this.directionRad / pi);
-            return -1;
+            return NaN;
         }
     }
 
@@ -404,7 +425,7 @@ define(['config', 'lodash'], function (config, _) {
         return (candidate.x <= star.x && candidate.right >= star.right);
     }
 
-    function getType() {
+    function getType () {
         return this.type;
     }
 

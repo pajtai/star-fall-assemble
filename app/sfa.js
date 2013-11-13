@@ -1,5 +1,5 @@
 /*global define:false */
-define(['jquery', 'engine', 'starFactory', 'config', 'touchSwipe', 'camera'], function ($, engine, StarFactory, config, touchSwipe, camera) {
+define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './camera'], function ($, engine, StarFactory, config, touchSwipe, camera) {
     'use strict';
 
     // TODO: why are boxes rectangular if body {height:100%}?
@@ -44,7 +44,12 @@ define(['jquery', 'engine', 'starFactory', 'config', 'touchSwipe', 'camera'], fu
             domWidth : $game.width(),
             domHeight : $game.height()
         };
-        StarFactory.setCanvasSize(this.size.width, this.size.height);
+        camera.setViewWindow({
+            x : 0,
+            y : 0,
+            right : this.canvas.width,
+            bottom : this.canvas.height
+        });
         StarFactory.loadContext(this);
         this.context = this.canvas.getContext('2d');
         engine.config({
