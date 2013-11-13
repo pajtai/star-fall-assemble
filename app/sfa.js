@@ -1,5 +1,5 @@
 /*global define:false */
-define(['jquery', 'engine', 'starFactory', 'config', 'touchSwipe'], function ($, engine, StarFactory, config, touchSwipe) {
+define(['jquery', 'engine', 'starFactory', 'config', 'touchSwipe', 'camera'], function ($, engine, StarFactory, config, touchSwipe, camera) {
     'use strict';
 
     // TODO: why are boxes rectangular if body {height:100%}?
@@ -83,7 +83,8 @@ define(['jquery', 'engine', 'starFactory', 'config', 'touchSwipe'], function ($,
         }
 
         if (keypresses.length) {
-            switch (direction = keypresses[0].which) {
+            direction = keypresses[0].which;
+            switch (direction) {
             case UP:
             case LEFT:
             case DOWN:

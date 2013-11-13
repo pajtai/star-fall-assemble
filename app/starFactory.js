@@ -81,7 +81,7 @@ define(['star', 'config','lodash'], function (Star, config,_) {
                     }
                 }
                 star1 = stars[collision[0]];
-                star2 = stars[collision[1]]
+                star2 = stars[collision[1]];
                 star1.stop();
                 star2.stop();
             });
@@ -95,7 +95,9 @@ define(['star', 'config','lodash'], function (Star, config,_) {
             return b > a;
         });
         _.each(remove, function (itemIndex) {
-            stars[itemIndex] && stars[itemIndex].kill();
+            if (stars[itemIndex]) {
+                stars[itemIndex].kill();
+            }
             // Checking for uniqueness of removal
             if (!doneIndices[itemIndex]) {
                 stars.splice(itemIndex, 1);

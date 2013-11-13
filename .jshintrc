@@ -7,5 +7,6 @@
     "curly": true,
     "quotmark": "single",
     "debug" : true,
-    "validthis" : true
+    "validthis" : true,
+    "laxcomma" : true
 }

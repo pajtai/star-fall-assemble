@@ -106,8 +106,6 @@ define(['config', 'lodash'], function (config, _) {
         this.x = undefined !== x ? x : this.getInitialX();
         this.y = undefined !== y ? y : this.getInitialY();
         this.setOppositeCornerCoordinates();
-        this.speed = undefined !== s ? s : (getRandomArbitrary(Star.minSpeed, Star.maxSpeed));
-        this.type = starType;
         switch(starType) {
         case Star.PLAYER:
             this.color = focusColor;
@@ -115,18 +113,20 @@ define(['config', 'lodash'], function (config, _) {
         case Star.BULLET:
             this.color = bulletColor;
             break;
-        case Star.REGULAR:
         default:
+        case Star.REGULAR:
             this.color = blurColor;
             break;
         }
+        this.speed = undefined !== s ? s : (getRandomArbitrary(Star.minSpeed, Star.maxSpeed));
+        this.type = starType;
         this.alive = true;
 
         cacheObj = canvasCache[this.getCacheKey()];
         if (!cacheObj) {
             canvasCache[this.getCacheKey()] = this.createCachedCanvas();
         }
-        // "this" is automatically returned ~
+        // 'this' is automatically returned ~
     }
 
     function getInitialX () {
@@ -139,9 +139,9 @@ define(['config', 'lodash'], function (config, _) {
         case pi_1_5:
             return getRandomInt(0, this.maxWidth - this.width);
         default:
-            console.log("no initial x: " + this.directionRad / pi);
+            console.log('no initial x: ' + this.directionRad / pi);
         }
-    };
+    }
 
     function getInitialY () {
         switch (this.directionRad) {
@@ -153,10 +153,10 @@ define(['config', 'lodash'], function (config, _) {
         case pi_1_5:
             return 0;
         default:
-            console.log("no initial y: " + this.directionRad / pi);
+            console.log('no initial y: ' + this.directionRad / pi);
             return -1;
         }
-    };
+    }
 
     function createCachedCanvas () {
         var canvas = document.createElement('canvas'),
@@ -172,7 +172,7 @@ define(['config', 'lodash'], function (config, _) {
             canvas : canvas,
             context : context
         };
-    };
+    }
 
 
     function getCachedCanvas () {
@@ -184,15 +184,15 @@ define(['config', 'lodash'], function (config, _) {
             cachedObj = canvasCache[key] = this.createCachedCanvas();
         }
         return cachedObj.canvas;
-    };
+    }
 
     function drawOn (context) {
         context.drawImage(this.getCachedCanvas(), floor(this.x), floor(this.y));
-    };
+    }
 
     function getCacheKey () {
         return cachePrefix + this.width + this.color.replace('#', '');
-    };
+    }
 
     // TODO: make stars movement depend on dt and not ticks
     function move (dt) {
@@ -212,34 +212,34 @@ define(['config', 'lodash'], function (config, _) {
             break;
         }
         this.setOppositeCornerCoordinates();
-        if (this.x > this.maxWidth || this.right < 0
-            || this.y > this.maxHeight || this.bottom < 0) {
+        if (this.x > this.maxWidth || this.right < 0 ||
+            this.y > this.maxHeight || this.bottom < 0) {
             showing = false;
             this.kill();
         }
         return showing;
-    };
+    }
 
     function setOppositeCornerCoordinates () {
         this.right = this.x + this.width;
         this.bottom = this.y + this.width;
         return this;
-    };
+    }
 
     function focus () {
         this.color = focusColor;
         return this;
-    };
+    }
 
     function blur () {
         this.color = blurColor;
         return this;
-    };
+    }
 
     function kill () {
         this.alive = false;
         return this;
-    };
+    }
 
     function isAlive () {
         return this.alive;
@@ -274,7 +274,7 @@ define(['config', 'lodash'], function (config, _) {
             return false;
         }
         return this.isOnSameVertical(star);
-    };
+    }
 
     function isBelow (star) {
         var candidate = this;
@@ -285,7 +285,7 @@ define(['config', 'lodash'], function (config, _) {
             return false;
         }
         return this.isOnSameVertical(star);
-    };
+    }
 
     function isLeftOf (star) {
         var candidate = this;
@@ -296,7 +296,7 @@ define(['config', 'lodash'], function (config, _) {
             return false;
         }
         return this.isOnSameHorizon(star);
-    };
+    }
 
     function isRightOf (star) {
         var candidate = this;
@@ -307,7 +307,7 @@ define(['config', 'lodash'], function (config, _) {
             return false;
         }
         return this.isOnSameHorizon(star);
-    };
+    }
 
     function distance (direction, star) {
         switch (direction) {
