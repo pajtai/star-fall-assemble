@@ -117,6 +117,15 @@ define(['./config', 'lodash'], function (config, _) {
         this.width = undefined !== width ? width : getRandomInt(Star.minStarWidth, Star.maxStarWidth);
         this.x = undefined !== x ? x : this.getInitialX(viewWindow.x, viewWindow.right);
         this.y = undefined !== y ? y : this.getInitialY(viewWindow.y, viewWindow.bottom);
+
+        if (pi_0_5 === this.directionRad || pi_1_5 === this.directionRad) {
+            console.log({
+                direction : pi_0_5 === this.directionRad ? 'down' : 'up',
+                y : this.y,
+                viewWindow : viewWindow
+            });
+        }
+
         this.setOppositeCornerCoordinates();
         switch (starType) {
         case Star.PLAYER:
@@ -215,13 +224,13 @@ define(['./config', 'lodash'], function (config, _) {
             this.x += dt * this.speed;
             break;
         case pi_1_5:
-            this.y += dt * this.speed;
+            this.y -= dt * this.speed;
             break;
         case pi_1_0:
             this.x -= dt * this.speed;
             break;
         case pi_0_5:
-            this.y -= dt * this.speed;
+            this.y += dt * this.speed;
             break;
         }
         this.setOppositeCornerCoordinates();
