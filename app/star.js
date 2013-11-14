@@ -5,7 +5,7 @@ define(['./config', 'lodash'], function (config, _) {
     /**
      * up is up, down is down, y increases as you move down
      */
-        
+
     var random = Math.random,
         floor = Math.floor,
         abs = Math.abs,

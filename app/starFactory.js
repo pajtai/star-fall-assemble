@@ -33,6 +33,7 @@ define(['./star', './config','lodash'], function (Star, config,_) {
         createStar : createStar,
         each : each,
         getPlayer : getPlayer,
+        getStarsArray : getStarsArray,
         loadContext : loadContext,
         setCamera : setCamera,
         setPlayer : setPlayer,
@@ -58,6 +59,10 @@ define(['./star', './config','lodash'], function (Star, config,_) {
         var star = new Star(this.camera, starType, x, y, width, speed, directionRad);
         stars.push(star);
         return star;
+    }
+
+    function getStarsArray () {
+        return stars;
     }
 
     function updateStars (dt, gameTimeStamp) {

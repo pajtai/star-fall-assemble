@@ -1,5 +1,5 @@
 /*global define:false */
-define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './camera'], function ($, engine, StarFactory, config, touchSwipe, camera) {
+define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './camera'], function ($, engine, starFactory, config, touchSwipe, camera) {
     'use strict';
 
     // TODO: why are boxes rectangular if body {height:100%}?
@@ -15,7 +15,6 @@ define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './came
 
     return {
         beginFalling : beginFalling,
-        clear : clear,
         createNewStar : createNewStar,
         getDirectionFromTouch : getDirectionFromTouch,
         listenToKeys : listenToKeys,
@@ -39,19 +38,32 @@ define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './came
         this.$fps = $('#fps');
         this.canvas = $game.get(0);
         this.size = {
-            width : this.canvas.width,
-            height : this.canvas.height,
             domWidth : $game.width(),
             domHeight : $game.height()
         };
+        this.context = this.canvas.getContext('2d');
+
+        camera.loadCanvasContext(this.context);
         camera.setViewWindow({
             x : 0,
             y : 0,
             right : this.canvas.width,
             bottom : this.canvas.height
         });
-        StarFactory.loadContext(this);
-        this.context = this.canvas.getContext('2d');
+        camera.loadRenderArray(starFactory.getStarsArray());
+
+        starFactory.loadContext(this);
+        // TODO: camera is being injected into too many objects
+        starFactory.setCamera(camera);
+        starFactory.setPlayer(
+            this.createNewStar(
+                starFactory.PLAYER,
+                0,
+                0,
+                width,
+                0
+        ));
+
         engine.config({
             context : this,
             update : this.update,
@@ -59,17 +71,12 @@ define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './came
         });
         engine.start();
         // TODO: move player somewhere else
-        StarFactory.setPlayer(this.createNewStar(
-            StarFactory.PLAYER,
-            this.size.width / 2 - width / 2,
-            this.size.height / 2 - width / 2,
-            width,
-            0
-        ));
+
 
         setTimeout(function () {
             $('#instructions').remove();
         }, 3000);
+
         this.listenToKeys();
     }
 
@@ -81,6 +88,8 @@ define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './came
         if (config.timePassed) {
             this.score = this.score + (dt * config.points.time);
         }
+
+        // TODO: replace with setTimeout
         this.nextScoreCounter = this.nextScoreCounter + dt;
 
         if (this.previousFps != fps) {
@@ -106,31 +115,26 @@ define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './came
                 break;
             }
         }
-        this.clear();
-        this.score += StarFactory.updateStars(dt, gameTimeStamp);
+        this.score += starFactory.updateStars(dt, gameTimeStamp);
         if (this.nextScoreInterval < this.nextScoreCounter) {
             this.$score.text(this.score);
             this.nextScoreCounter = 0;
         }
-        StarFactory.each(function (index, item) {
-            item.drawOn(self.context);
-        });
+        camera.centerOn(starFactory.getPlayer());
+        camera.render();
+
         if (gameTimeStamp >= this.nextStarInterval) {
             this.createNewStar();
         }
-        player = StarFactory.getPlayer();
+        player = starFactory.getPlayer();
 
         return player ? player.isAlive() : true;
     }
 
     // TODO: create attributes object
-    function createNewStar (starType, x, y, w, s) {
+    function createNewStar (starType, x, y, width, speed) {
         this.nextStarInterval += this.starIntervalMs;
-        return StarFactory.createStar(starType || StarFactory.REGULAR, x, y, w, s);
-    }
-
-    function clear () {
-        this.context.clearRect(0, 0, this.size.width, this.size.height);
+        return starFactory.createStar(starType || starFactory.REGULAR, x, y, width, speed);
     }
 
     function listenToKeys () {
@@ -171,20 +175,20 @@ define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './came
     }
 
     function move (direction) {
-        var player = StarFactory.getPlayer(),
-            closest = StarFactory.closestToThe(player, direction);
+        var player = starFactory.getPlayer(),
+            closest = starFactory.closestToThe(player, direction);
 
         if (closest) {
             player.blur();
             if (player.isAlive()) {
-                StarFactory.setPlayer(closest);
+                starFactory.setPlayer(closest);
                 closest.focus();
             }
         }
     }
 
     function shoot (direction) {
-        StarFactory.shootFrom(StarFactory.getPlayer(), direction);
+        starFactory.shootFrom(starFactory.getPlayer(), direction);
     }
 
     function stop () {
