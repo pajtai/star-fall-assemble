@@ -8,9 +8,6 @@ define(['./config', 'lodash'], function (config, _) {
 
     var random = Math.random,
         floor = Math.floor,
-        abs = Math.abs,
-        sin = Math.sin,
-        cos = Math.cos,
         pi = Math.PI,
         pi_0_0 = config.pi_0_0,
         pi_0_5 = config.pi_0_5,
@@ -106,11 +103,7 @@ define(['./config', 'lodash'], function (config, _) {
      */
     function Star (camera, starType, x, y, width, speed, directionRad) {
         var cacheObj,
-            viewWindow = camera.getViewWindow(),
-            minWidth = viewWindow.x,
-            maxWidth = viewWindow.right,
-            minHeight = viewWindow.y,
-            maxHeight = viewWindow.bottom;
+            viewWindow = camera.getViewWindow();
 
 
         if (!(this instanceof Star)) {
@@ -119,12 +112,11 @@ define(['./config', 'lodash'], function (config, _) {
 
         this.camera = camera;
 
-
         // Pick a cardinal radian direction from 0 to 2pi
         this.directionRad = undefined === directionRad ? pi * (getRandomInt(0, 3) / 2) : directionRad;
         this.width = undefined !== width ? width : getRandomInt(Star.minStarWidth, Star.maxStarWidth);
-        this.x = undefined !== x ? x : this.getInitialX(minWidth, maxWidth);
-        this.y = undefined !== y ? y : this.getInitialY(minHeight, maxHeight);
+        this.x = undefined !== x ? x : this.getInitialX(viewWindow.x, viewWindow.right);
+        this.y = undefined !== y ? y : this.getInitialY(viewWindow.y, viewWindow.bottom);
         this.setOppositeCornerCoordinates();
         switch (starType) {
         case Star.PLAYER:
@@ -181,8 +173,7 @@ define(['./config', 'lodash'], function (config, _) {
 
     function createCachedCanvas () {
         var canvas = document.createElement('canvas'),
-            context,
-            canvasCache;
+            context;
 
         canvas.width = this.width;
         canvas.height = this.width;
@@ -218,6 +209,7 @@ define(['./config', 'lodash'], function (config, _) {
     // TODO: make stars movement depend on dt and not ticks
     function move (dt) {
         var showing = true;
+
         switch (this.directionRad) {
         case pi_0_0:
             this.x += dt * this.speed;
@@ -233,8 +225,9 @@ define(['./config', 'lodash'], function (config, _) {
             break;
         }
         this.setOppositeCornerCoordinates();
-        if (this.x > this.maxWidth || this.right < 0 ||
-            this.y > this.maxHeight || this.bottom < 0) {
+
+        // TODO: make this a little less primitive
+        if (! this.camera.visible(this)) {
             showing = false;
             this.kill();
         }

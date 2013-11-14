@@ -60,10 +60,10 @@ define(['lodash'], function (_) {
     }
 
     function setViewWindow (windowConfig) {
-        this.viewWindow.x = windowConfig.x;
-        this.viewWindow.y = windowConfig.y;
-        this.viewWindow.right = windowConfig.right;
-        this.viewWindow.bottom = windowConfig.bottom;
+        this.viewWindow.x = floor(windowConfig.x);
+        this.viewWindow.y = floor(windowConfig.y);
+        this.viewWindow.right = floor(windowConfig.right);
+        this.viewWindow.bottom = floor(windowConfig.bottom);
     }
 
     function getViewWindow () {
