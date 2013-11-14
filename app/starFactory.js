@@ -1,5 +1,5 @@
 /*global define:false */
-define(['jquery', 'star', 'config'], function ($, Star, config) {
+define(['./star', './config','lodash'], function (Star, config,_) {
     'use strict';
 
     var stars = [],
@@ -16,59 +16,84 @@ define(['jquery', 'star', 'config'], function ($, Star, config) {
         pi_0_5 = config.pi_0_5,
         pi_1_0 = config.pi_1_0,
         pi_1_5 = config.pi_1_5,
-        testMode = true,
+        testMode = false,
         floor = Math.floor,
         ceil = Math.ceil;
 
     // TODO: create a star manager
     return {
-        loadContext : loadContext,
-        setCanvasSize : setCanvasSize,
-        createStar : createStar,
-        updateStars : updateStars,
-        each : each,
+
+        PLAYER: Star.PLAYER,
+        BULLET: Star.BULLET,
+        REGULAR: Star.REGULAR,
+
+        closestToThe : closestToThe,
         collidesWith : collidesWith,
         collisionsInList : collisionsInList,
-        closestToThe : closestToThe,
-        setPlayer : setPlayer,
+        createStar : createStar,
+        each : each,
         getPlayer : getPlayer,
-        shootFrom : shootFrom
+        getStarsArray : getStarsArray,
+        loadContext : loadContext,
+        setCamera : setCamera,
+        setPlayer : setPlayer,
+        shootFrom : shootFrom,
+        updateStars : updateStars
     };
 
     function loadContext (context) {
         this.context = context;
     }
 
-    function setCanvasSize (maxWidth, maxHeight) {
-        this.maxWidth = maxWidth;
-        this.maxHeight = maxHeight;
-    }
-
-    function createStar (focused, x, y, w, s, c, d) {
-        var star = new Star(this.maxWidth, this.maxHeight, focused, x, y, w, s, c, d);
+    /**
+     * Creates a star on camera
+     * @param starType
+     * @param x
+     * @param y
+     * @param width
+     * @param speed
+     * @param directionRad
+     * @returns {Star}
+     */
+    function createStar (starType, x, y, width, speed, directionRad) {
+        var star = new Star(this.camera, starType, x, y, width, speed, directionRad);
         stars.push(star);
         return star;
+    }
+
+    function getStarsArray () {
+        return stars;
     }
 
     function updateStars (dt, gameTimeStamp) {
 
         var remove = [],
             collisions = [],
-            doneIndices = [];
+            doneIndices = [],
+            plusScore = 0,
+            scoreStars = [];
 
-        $.each(stars, function (index, star) {
+        _.each(stars, function (star, index) {
             if (!star.move(dt)) {
                 remove.push(index);
             }
         });
 
         if (stars.length) {
-            $.each(collisionsInList(stars), function (index, collision) {
+            _.each(collisionsInList(stars), function (collision) {
                 var star1, star2;
                 collisions.push(collision[0]);
                 collisions.push(collision[1]);
+                if (config.score.bulletCollisions) {
+                    if (Star.BULLET === stars[collision[0]].getType()) {
+                        scoreStars.push(stars[collision[0]]);
+                    }
+                    if (Star.BULLET === stars[collision[1]].getType()) {
+                        scoreStars.push(stars[collision[1]]);
+                    }
+                }
                 star1 = stars[collision[0]];
-                star2 = stars[collision[1]]
+                star2 = stars[collision[1]];
                 star1.stop();
                 star2.stop();
             });
@@ -81,19 +106,26 @@ define(['jquery', 'star', 'config'], function ($, Star, config) {
         remove.sort(function (a, b) {
             return b > a;
         });
-        $.each(remove, function (index, itemIndex) {
-            stars[itemIndex] && stars[itemIndex].kill();
+        _.each(remove, function (itemIndex) {
+            if (stars[itemIndex]) {
+                stars[itemIndex].kill();
+            }
             // Checking for uniqueness of removal
             if (!doneIndices[itemIndex]) {
                 stars.splice(itemIndex, 1);
                 doneIndices[itemIndex] = true;
             }
         });
+        scoreStars = _.uniq(scoreStars);
+        _.each(scoreStars, function() {
+            plusScore += config.score.points.collision;
+        });
+        return plusScore;
     }
 
     function each (callback) {
         var self = this;
-        $.each(stars, function (index, item) {
+        _.each(stars, function (item, index) {
             callback.call(self.context, index, item);
         });
     }
@@ -120,7 +152,7 @@ define(['jquery', 'star', 'config'], function ($, Star, config) {
     function collisionsInList (list) {
         var collisions = [];
 
-        $.each(combinations(list), function (index, pair) {
+        _.each(combinations(list), function (pair) {
             if (collidesWith(list[pair[0]], list[pair[1]])) {
                 collisions.push([
                     pair[0],
@@ -179,7 +211,7 @@ define(['jquery', 'star', 'config'], function ($, Star, config) {
             },
             distance;
 
-        $.each(stars, function(index, candidate) {
+        _.each(stars, function(candidate) {
             switch (direction) {
             case UP:
             case LEFT:
@@ -212,41 +244,41 @@ define(['jquery', 'star', 'config'], function ($, Star, config) {
         // TODO: replace hard coded color with type - bullet
         switch (direction) {
         case SHOOT_UP:
-            this.createStar(false
+            this.createStar(Star.BULLET
                 , floor(player.x + player.width/2 - width/2)
                 , floor(player.y - width)
                 , width
                 , speed
-                , "#00FF00"
                 , pi_0_5);
             break;
         case SHOOT_DOWN:
-            this.createStar(false
+            this.createStar(Star.BULLET
                 , floor(player.x + player.width/2 - width/2)
                 , ceil(player.bottom)
                 , width
                 , speed
-                , "#00FF00"
                 , pi_1_5);
             break;
         case SHOOT_LEFT:
-            this.createStar(false
+            this.createStar(Star.BULLET
                 , floor(player.x - player.width)
                 , floor(player.y + player.width/2 - width/2)
                 , width
                 , speed
-                , "#00FF00"
                 , pi_1_0);
             break;
         case SHOOT_RIGHT:
-            this.createStar(false
+            this.createStar(Star.BULLET
                 , ceil(player.right)
                 , floor(player.y + player.width/2 - width/2)
                 , width
                 , speed
-                , "#00FF00"
                 , pi_0_0);
             break;
         }
+    }
+
+    function setCamera(camera) {
+        this.camera = camera;
     }
 });
