@@ -16,9 +16,11 @@ define(['./star', './config','lodash'], function (Star, config,_) {
         pi_0_5 = config.pi_0_5,
         pi_1_0 = config.pi_1_0,
         pi_1_5 = config.pi_1_5,
-        testMode = false,
+        testMode = true,
         floor = Math.floor,
         ceil = Math.ceil;
+
+    Star.testMode = testMode;
 
     // TODO: create a star manager
     return {
@@ -249,7 +251,7 @@ define(['./star', './config','lodash'], function (Star, config,_) {
                 , floor(player.y - width)
                 , width
                 , speed
-                , pi_0_5);
+                , pi_1_5);
             break;
         case SHOOT_DOWN:
             this.createStar(Star.BULLET
@@ -257,7 +259,7 @@ define(['./star', './config','lodash'], function (Star, config,_) {
                 , ceil(player.bottom)
                 , width
                 , speed
-                , pi_1_5);
+                , pi_0_5);
             break;
         case SHOOT_LEFT:
             this.createStar(Star.BULLET
