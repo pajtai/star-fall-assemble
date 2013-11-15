@@ -87,6 +87,7 @@ define(['./config', 'lodash'], function (config, _) {
     Star.maxSpeed = 0.05;
     Star.minStarWidth = 5;
     Star.maxStarWidth = 10;
+    Star.testMode = false;
     // TODO: create typeofstar arguments
 
     /**
@@ -236,7 +237,7 @@ define(['./config', 'lodash'], function (config, _) {
         this.setOppositeCornerCoordinates();
 
         // TODO: make this a little less primitive
-        if (! this.camera.visible(this)) {
+        if (! this.camera.visible(this) && !Star.testMode) {
             showing = false;
             this.kill();
         }
