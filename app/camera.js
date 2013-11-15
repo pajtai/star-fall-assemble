@@ -1,7 +1,21 @@
 /*global define:false */
 define(['lodash'], function (_) {
 
-    var floor = Math.floor;
+    var floor = Math.floor,
+        dotCache = (function() {
+            var canvas = document.createElement('canvas'),
+                context;
+
+            canvas.width = 1;
+            canvas.height = 1;
+            context = canvas.getContext('2d');
+            context.fillStyle = '#FFFFFF';
+            context.fillRect(0,0,1,1);
+            return {
+                canvas : canvas,
+                context : context
+            };
+        }());
 
     return {
         viewWindow : {
@@ -28,7 +42,8 @@ define(['lodash'], function (_) {
 
     function clear () {
         // TODO: cache width and height
-        this.context.clearRect(0, 0, this.getViewWindowWidth(), this.getViewWindowHeight());
+        this.context.fillRect(0, 0, this.getViewWindowWidth(), this.getViewWindowHeight());
+        this.context.fillStyle = "#000000";
     }
 
     function getViewWindowWidth() {
@@ -80,14 +95,26 @@ define(['lodash'], function (_) {
     }
 
     function render() {
-        var self = this;
+        var self = this,
+            i, j, viewWindow = this.viewWindow;
+
 
         this.clear();
+        for (i = viewWindow.x; i < viewWindow.right; ++i) {
+            for (j = viewWindow.y; j < viewWindow.bottom; ++j) {
+                if (0 === i%25 && 0 === j%25) {
+                    this.context.drawImage(dotCache.canvas, this.getCanvasX(i), this.getCanvasY(j));
+                }
+            }
+        }
+
+
         _.each(this.stars, function(star) {
             if (self.visible(star)) {
                 self.draw(star);
             }
         });
+
     }
 
     function visible(star) {
@@ -102,10 +129,10 @@ define(['lodash'], function (_) {
     }
 
     function getCanvasX(star) {
-        return star.x - this.viewWindow.x;
+        return (undefined === star.x ? star : star.x) - this.viewWindow.x;
     }
 
     function getCanvasY(star) {
-        return star.y - this.viewWindow.y;
+        return (undefined === star.y ? star : star.y) - this.viewWindow.y;
     }
 });
