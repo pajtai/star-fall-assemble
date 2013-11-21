@@ -85,8 +85,8 @@ define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './came
             direction,
             player;
 
-        if (config.timePassed) {
-            this.score = this.score + (dt * config.points.time);
+        if (config.score.timePassed) {
+            this.score = this.score + (dt * config.score.points.time);
         }
 
         // TODO: replace with setTimeout

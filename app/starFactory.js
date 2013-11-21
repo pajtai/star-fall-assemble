@@ -16,7 +16,7 @@ define(['./star', './config','lodash'], function (Star, config,_) {
         pi_0_5 = config.pi_0_5,
         pi_1_0 = config.pi_1_0,
         pi_1_5 = config.pi_1_5,
-        testMode = true,
+        testMode = config.testMode,
         floor = Math.floor,
         ceil = Math.ceil;
 
