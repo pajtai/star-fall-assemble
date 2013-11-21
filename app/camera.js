@@ -43,7 +43,7 @@ define(['lodash'], function (_) {
     function clear () {
         // TODO: cache width and height
         this.context.fillRect(0, 0, this.getViewWindowWidth(), this.getViewWindowHeight());
-        this.context.fillStyle = "#000000";
+        this.context.fillStyle = '#000000';
     }
 
     function getViewWindowWidth() {

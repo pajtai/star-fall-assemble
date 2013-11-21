@@ -1,4 +1,5 @@
 define({
+    testMode : false,
     LEFT : 37,
     UP : 38,
     RIGHT : 39,
@@ -12,7 +13,7 @@ define({
     pi_1_0 : Math.PI,
     pi_1_5 : 1.5 * Math.PI,
     score : {
-        timePassed : false,
+        timePassed : true,
         bulletCollisions : true,
         points : {
             collision : 1500,
