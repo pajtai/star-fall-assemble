@@ -187,6 +187,7 @@ define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './came
 
         var cutoff = this.size.domWidth / 2,
             theX = event.cached_start_x || event.x;
+        alert(theX + ' - ' + cutoff + ' - ' + direction + ' - ' + event.cached_start_x);
         switch(direction) {
         case 'up':
             return theX < cutoff ? UP : SHOOT_UP;
