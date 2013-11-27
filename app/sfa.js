@@ -75,7 +75,7 @@ define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './came
         // TODO: move player somewhere else
 
         if (window.DocumentTouch && document instanceof DocumentTouch) {
-            $instructions.html("Swipe on left side of screen to jump focus<br/>Swipe on right side of screen to shoot");
+            $instructions.html("<h3>Swipe on left side of screen to jump focus<br/>Swipe on right side of screen to shoot</h3>");
         }
         setTimeout(function () {
             $instructions.remove();
