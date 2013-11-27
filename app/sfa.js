@@ -164,20 +164,13 @@ define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './came
                 case END:
                     swipe = {};
                     swipe.preventDefault = event.preventDefault.bind(event);
-                    swipe.which = self.getDirectionFromTouch(event, direction, distance);
                     swipe.cached_start_x = cached_start_x;
+                    swipe.which = self.getDirectionFromTouch(event, direction, distance);
                     cached_start_x = undefined;
                     engine.keypress(swipe);
                     break;
                 }
 
-            },
-            //Generic swipe handler for all directions
-            swipe : function (event, direction, distance, duration, fingerCount) {
-                var swipe = {};
-                swipe.preventDefault = event.preventDefault.bind(event);
-                swipe.which = self.getDirectionFromTouch(event, direction, distance);
-                engine.keypress(swipe);
             },
             //Default is 75px, set to 0 for demo so any distance triggers swipe
             threshold : 10
@@ -188,7 +181,9 @@ define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './came
 
         var cutoff = this.size.domWidth / 2,
             theX = event.cached_start_x || event.x;
-        alert(theX + ' - ' + cutoff + ' - ' + direction + ' - ' + event.cached_start_x);
+        _.once(function() {
+            alert(theX + ' - ' + cutoff + ' - ' + direction + ' - ' + event.cached_start_x);
+        });
         switch(direction) {
         case 'up':
             return theX < cutoff ? UP : SHOOT_UP;
