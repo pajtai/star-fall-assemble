@@ -144,6 +144,7 @@ define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './came
         $body.keydown(function (event) {
             engine.keypress(event);
         });
+        //
         $body.swipe({
             swipeStatus:function(event, phase, direction, distance, duration, fingers)
             {
