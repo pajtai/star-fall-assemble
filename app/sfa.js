@@ -185,16 +185,17 @@ define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './came
 
     function getDirectionFromTouch(event, direction, distance) {
 
-        var cutoff = this.size.domWidth / 2;
+        var cutoff = this.size.domWidth / 2,
+            theX = event.cached_start_x || event.x;
         switch(direction) {
         case 'up':
-            return event.x || event.cached_start_x < cutoff ? UP : SHOOT_UP;
+            return theX < cutoff ? UP : SHOOT_UP;
         case 'down':
-            return event.x || event.cached_start_x < cutoff ? DOWN : SHOOT_DOWN;
+            return theX < cutoff ? DOWN : SHOOT_DOWN;
         case 'left':
-            return (event.x || event.cached_start_x) + distance < cutoff ? LEFT : SHOOT_LEFT;
+            return theX + distance < cutoff ? LEFT : SHOOT_LEFT;
         case 'right':
-            return (event.x || event.cached_start_x) - distance < cutoff ? RIGHT : SHOOT_RIGHT;
+            return theX - distance < cutoff ? RIGHT : SHOOT_RIGHT;
         default:
             return '';
         }
