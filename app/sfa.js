@@ -11,7 +11,8 @@ define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './came
         SHOOT_UP = config.SHOOT_UP,
         SHOOT_LEFT = config.SHOOT_LEFT,
         SHOOT_RIGHT = config.SHOOT_RIGHT,
-        SHOOT_DOWN = config.SHOOT_DOWN;
+        SHOOT_DOWN = config.SHOOT_DOWN,
+        cached_start_x;
 
     return {
         beginFalling : beginFalling,
@@ -144,6 +145,32 @@ define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './came
             engine.keypress(event);
         });
         $body.swipe({
+            swipeStatus:function(event, phase, direction, distance, duration, fingers)
+            {
+                var START = 'start',
+                    END = 'end',
+                    swipe;
+                //Here we can check the:
+                //phase : 'start', 'move', 'end', 'cancel'
+                //direction : 'left', 'right', 'up', 'down'
+                //distance : Distance finger is from initial touch point in px
+                //duration : Length of swipe in MS
+                //fingerCount : the number of fingers used
+                switch (phase) {
+                case START:
+                    cached_start_x = event.clientX || event.touches[0].clientX;
+                    break;
+                case END:
+                    cached_start_x = undefined;
+                    swipe = {};
+                    swipe.preventDefault = event.preventDefault.bind(event);
+                    swipe.which = self.getDirectionFromTouch(event, direction, distance);
+                    swipe.cached_start_x = cached_start_x;
+                    engine.keypress(swipe);
+                    break;
+                }
+
+            },
             //Generic swipe handler for all directions
             swipe : function (event, direction, distance, duration, fingerCount) {
                 var swipe = {};
@@ -159,17 +186,15 @@ define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './came
     function getDirectionFromTouch(event, direction, distance) {
 
         var cutoff = this.size.domWidth / 2;
-        console.log('--------');
-        console.log(JSON.stringify(event));
         switch(direction) {
         case 'up':
-            return event.x || event.touches[0].clientX < cutoff ? UP : SHOOT_UP;
+            return event.x || event.cached_start_x < cutoff ? UP : SHOOT_UP;
         case 'down':
-            return event.x || event.touches[0].clientX < cutoff ? DOWN : SHOOT_DOWN;
+            return event.x || event.cached_start_x < cutoff ? DOWN : SHOOT_DOWN;
         case 'left':
-            return (event.x || event.touches[0].clientX) + distance < cutoff ? LEFT : SHOOT_LEFT;
+            return (event.x || event.cached_start_x) + distance < cutoff ? LEFT : SHOOT_LEFT;
         case 'right':
-            return (event.x || event.touches[0].clientX) - distance < cutoff ? RIGHT : SHOOT_RIGHT;
+            return (event.x || event.cached_start_x) - distance < cutoff ? RIGHT : SHOOT_RIGHT;
         default:
             return '';
         }
