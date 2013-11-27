@@ -159,6 +159,7 @@ define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './came
                 //fingerCount : the number of fingers used
                 switch (phase) {
                 case START:
+                    alert(event.clientX + ' - ' + event.touches[0].clientX);
                     cached_start_x = event.clientX || event.touches[0].clientX;
                     break;
                 case END:
@@ -181,7 +182,6 @@ define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './came
 
         var cutoff = this.size.domWidth / 2,
             theX = event.cached_start_x || event.x;
-        alert(theX + ' - ' + cutoff + ' - ' + direction + ' - ' + event.cached_start_x);
         switch(direction) {
         case 'up':
             return theX < cutoff ? UP : SHOOT_UP;
