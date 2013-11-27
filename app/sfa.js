@@ -159,15 +159,12 @@ define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './came
                 //fingerCount : the number of fingers used
                 switch (phase) {
                 case START:
-                    alert(event.clientX + ' - ' + event.touches[0].clientX);
                     cached_start_x = event.clientX || event.touches[0].clientX;
                     break;
                 case END:
                     swipe = {};
                     swipe.preventDefault = event.preventDefault.bind(event);
-                    swipe.cached_start_x = cached_start_x;
                     swipe.which = self.getDirectionFromTouch(event, direction, distance);
-                    cached_start_x = undefined;
                     engine.keypress(swipe);
                     break;
                 }
@@ -181,7 +178,8 @@ define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './came
     function getDirectionFromTouch(event, direction, distance) {
 
         var cutoff = this.size.domWidth / 2,
-            theX = event.cached_start_x || event.x;
+            theX = cached_start_x || event.x;
+        cached_start_x = undefined;
         switch(direction) {
         case 'up':
             return theX < cutoff ? UP : SHOOT_UP;
