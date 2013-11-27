@@ -31,7 +31,8 @@ define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './came
 
     function beginFalling () {
         var $game = $('#game'),
-            width = 10;
+            width = 10,
+            $instructions = $('#instructions');
         this.$score = $('#score');
         this.score = 0;
         this.nextScoreInterval = 500;
@@ -73,9 +74,11 @@ define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './came
         engine.start();
         // TODO: move player somewhere else
 
-
+        if (window.DocumentTouch && document instanceof DocumentTouch) {
+            $instructions.html("Swipe on left side of screen to jump focus<br/>Swipe on right side of screen to shoot");
+        }
         setTimeout(function () {
-            $('#instructions').remove();
+            $instructions.remove();
         }, 3000);
 
         this.listenToKeys();
