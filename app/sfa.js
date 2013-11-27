@@ -161,11 +161,11 @@ define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './came
                     cached_start_x = event.clientX || event.touches[0].clientX;
                     break;
                 case END:
-                    cached_start_x = undefined;
                     swipe = {};
                     swipe.preventDefault = event.preventDefault.bind(event);
                     swipe.which = self.getDirectionFromTouch(event, direction, distance);
                     swipe.cached_start_x = cached_start_x;
+                    cached_start_x = undefined;
                     engine.keypress(swipe);
                     break;
                 }
