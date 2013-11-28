@@ -92,52 +92,27 @@ module.exports = function (grunt) {
             }
         },
 
-        rev : {
-            deploy : {
-                files : {
-                    src : [
-                        'build/**/*.js',
-                        'build/{,*/}*.css',
-                        'build/images/{,*/}*.{png,jpg,jpeg,gif,webp}'
-                    ]
-                }
-            }
-        },
-
         requirejs: {
             deploy : {
-                // Options: https://github.com/jrburke/r.js/blob/master/build/example.build.js
-                options : {
-                    // `name` and `out` is set by grunt-usemin
-                    baseUrl : 'temp',
-                    optimize : 'none',
-                    // TODO: Figure out how to make sourcemaps work with grunt-usemin
-                    // https://github.com/yeoman/grunt-usemin/issues/30
-                    //generateSourceMaps: true,
-                    // required to support SourceMaps
-                    // http://requirejs.org/docs/errors.html#sourcemapcomments
-                    preserveLicenseComments : false,
-                    useStrict : true,
-                    wrap : true
-                    //uglify2: {} // https://github.com/mishoo/UglifyJS2
+                options: {
+                    name: "main",
+                    baseUrl: "app",
+                    mainConfigFile: "app/main.js",
+                    out: "build/app/main.js",
+                    include : "vendor/requirejs/require.js",
+                    preserveLicenseComments: false,
+                    optimize: "uglify2"
                 }
             }
-        },
-
-        usemin : {
-            html : ['build/index.html'],
-            css : ['build/{,*/}*.css'],
-            options : {
-                dirs : ['build']
-            }
-        },
-
-        useminPrepare : {
-            html : ['temp/index.html'],
-            options : {
-                dest : 'build'
-            }
         }
+
+    });
+
+    grunt.registerTask('rewriteIndex', function() {
+        var index = grunt.file.read('build/app/index.html');
+        index = index.replace('data-main="main"', '');
+        index = index.replace('vendor/requirejs/require.js', 'main.js');
+        grunt.file.write('build/app/index.html', index);
     });
 
     // To start editing your slideshow using livereload, run 'grunt server'
@@ -148,10 +123,7 @@ module.exports = function (grunt) {
             'clean:build',
             'copy:build',
             'requirejs',
-            'useminPrepare',
-            'requirejs',
-            'rev',
-            'usemin',
-            'build_gh_pages:build'
+            'rewriteIndex'
+            //'build_gh_pages:build'
         ]);
 };
