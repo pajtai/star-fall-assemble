@@ -3,6 +3,8 @@
 
 https://github.com/pajtai/star-fall-assemble
 
+http
+
 A simple JavaScript canvas game.
 
 Release Notes:

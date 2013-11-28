@@ -2,6 +2,7 @@
 define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './camera'], function ($, engine, starFactory, config, touchSwipe, camera) {
     'use strict';
 
+    // _Sprites from : http://forums.rpgmakerweb.com/index.php?/topic/866-zombie-sprites/_
     // TODO: why are boxes rectangular if body {height:100%}?
     // TODO: move directions into config file
     var UP = config.UP,
@@ -76,7 +77,7 @@ define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './came
         // TODO: move player somewhere else
 
         if (window.DocumentTouch && document instanceof DocumentTouch) {
-            $instructions.html("<h3>Swipe on left side of screen to jump focus<br/>Swipe on right side of screen to shoot</h3>");
+            $instructions.html('<h3>Swipe on left side of screen to jump focus<br/>Swipe on right side of screen to shoot</h3>');
         }
         setTimeout(function () {
             $instructions.remove();
