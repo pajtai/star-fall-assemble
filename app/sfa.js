@@ -34,14 +34,15 @@ define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './came
             width = 10,
             $instructions = $('#instructions');
         this.$score = $('#score');
+        this.$window = $(window);
         this.score = 0;
         this.nextScoreInterval = 500;
         this.nextScoreCounter = 0;
         this.$fps = $('#fps');
         this.canvas = $game.get(0);
         this.size = {
-            domWidth : $game.width(),
-            domHeight : $game.height()
+            domWidth : this.$window.width(),
+            domHeight : this.$window.height()
         };
         this.context = this.canvas.getContext('2d');
 
