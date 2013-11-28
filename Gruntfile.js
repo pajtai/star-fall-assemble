@@ -66,12 +66,15 @@ module.exports = function (grunt) {
         copy : {
             build : {
                 files : [
-                    {expand: true, src :
+                    {expand: true,
+                        cwd : 'app/',
+                        src :
                         [
-                            'app/**',
-                            '!app/**/*.js'
-                        ], dest : 'build'},
-                    {expand: true, src : 'tests/**', dest : 'build'}
+                            '**',
+                            '!**/*.js',
+                            '!vendor',
+                            '!vendor/**/*'
+                        ], dest : 'build'}
                 ]
             }
         },
@@ -102,7 +105,7 @@ module.exports = function (grunt) {
                     name: "main",
                     baseUrl: "app",
                     mainConfigFile: "app/main.js",
-                    out: "build/app/main.js",
+                    out: "build/main.js",
                     include : "vendor/requirejs/require.js",
                     preserveLicenseComments: false,
                     optimize: "uglify2"
@@ -113,10 +116,10 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('rewriteIndex', function() {
-        var index = grunt.file.read('build/app/index.html');
+        var index = grunt.file.read('build/index.html');
         index = index.replace('data-main="main"', '');
         index = index.replace('vendor/requirejs/require.js', 'main.js');
-        grunt.file.write('build/app/index.html', index);
+        grunt.file.write('build/index.html', index);
     });
 
     // To start editing your slideshow using livereload, run 'grunt server'
@@ -127,7 +130,7 @@ module.exports = function (grunt) {
             'clean:build',
             'copy:build',
             'requirejs',
-            'rewriteIndex'
-            //'build_gh_pages:build'
+            'rewriteIndex',
+            'build_gh_pages:build'
         ]);
 };
