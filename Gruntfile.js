@@ -95,9 +95,9 @@ module.exports = function (grunt) {
         requirejs: {
             compile: {
                 options: {
-                    baseUrl: "path/to/base",
-                    mainConfigFile: "path/to/config.js",
-                    out: "path/to/optimized.js"
+                    baseUrl: "app",
+                    mainConfigFile: "app/main.js",
+                    out: "build/main.js"
                 }
             }
         }
@@ -106,5 +106,5 @@ module.exports = function (grunt) {
     // To start editing your slideshow using livereload, run 'grunt server'
     grunt.registerTask('server', 'Build and watch task', ['jshint', 'connect:app',  'open:app', 'watch']);
     grunt.registerTask('testServer', 'Build and watch task', ['connect:tests',  'open:tests', 'watch']);
-    grunt.registerTask('deploy', 'Deploy website to gh-pages', ['clean:build', 'copy:build', 'build_gh_pages:build']);
+    grunt.registerTask('deploy', 'Deploy website to gh-pages', ['clean:build', 'copy:build', 'requirejs', 'build_gh_pages:build']);
 };
