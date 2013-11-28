@@ -83,8 +83,8 @@ define(['./config', 'lodash'], function (config, _) {
     Star.REGULAR = 'REGULAR';
     Star.PLAYER = 'PLAYER';
     Star.BULLET = 'BULLET';
-    Star.minSpeed = 0.01;
-    Star.maxSpeed = 0.05;
+    Star.minSpeed = 0.005;
+    Star.maxSpeed = 0.025;
     Star.minStarWidth = 5;
     Star.maxStarWidth = 10;
     Star.testMode = false;
