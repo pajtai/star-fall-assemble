@@ -3,117 +3,12 @@ module.exports = function (grunt) {
 
     'use strict';
 
-    var path = require('path'),
-        lrSnippet = require('grunt-contrib-livereload/lib/utils').livereloadSnippet,
-        folderMount = function folderMount (connect, point) {
-            return connect.static(path.resolve(point));
-        };
+    var _ = grunt.util._;
 
     // load all grunt tasks
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
-    // Project configuration.
-    grunt.initConfig({
-
-        watch : {
-            tests : {
-                options : {
-                    // Start a live reload server on the default port: 35729
-                    livereload : true
-                },
-                files : [
-                    'tests/**/*.js',
-                    'app/**/*.js'
-                ],
-                tasks: [
-                ]
-            }
-        },
-
-        connect : {
-            options : {
-                port : 9001,
-                hostname : 'localhost',
-                middleware : function (connect, options) {
-                    return [lrSnippet, folderMount(connect, options.base)];
-                }
-            },
-            app : {
-                options : {
-                    base : './app'
-                }
-            },
-            tests : {
-                options : {
-                    base : './'
-                }
-            }
-        },
-
-        open : {
-            app : {
-                path : 'http://localhost:9001/'
-            },
-            tests : {
-                path : 'http://localhost:9001/tests/'
-            }
-        },
-
-        clean : {
-            build : ['build']
-        },
-
-        copy : {
-            build : {
-                files : [
-                    {expand: true,
-                        cwd : 'app/',
-                        src :
-                        [
-                            '**',
-                            '!**/*.js',
-                            '!vendor',
-                            '!vendor/**/*'
-                        ], dest : 'build'}
-                ]
-            }
-        },
-
-        build_gh_pages : {
-            build : {
-                options : {
-                    build_branch : 'gh-pages',
-                    dist : 'build'
-                }
-            }
-        },
-
-        jshint : {
-            files : [
-                'app/**/*.js',
-                '!app/vendor/**/*.js',
-                '!app/ignore.js'
-            ],
-            options : {
-                jshintrc : '.jshintrc'
-            }
-        },
-
-        requirejs: {
-            deploy : {
-                options: {
-                    name: "main",
-                    baseUrl: "app",
-                    mainConfigFile: "app/main.js",
-                    out: "build/main.js",
-                    include : "vendor/requirejs/require.js",
-                    preserveLicenseComments: false,
-                    optimize: "uglify2"
-                }
-            }
-        }
-
-    });
+    grunt.initConfig(loadConfig('./tasks/options/'));
 
     grunt.registerTask('rewriteIndex', function() {
         var index = grunt.file.read('build/index.html');
@@ -133,4 +28,22 @@ module.exports = function (grunt) {
             'rewriteIndex',
             'build_gh_pages:build'
         ]);
+
+    function loadConfig(files) {
+        var glob = require('glob'),
+            path = require('path'),
+            object = {},
+            key,
+            required;
+
+        glob.sync('*', {cwd: files}).forEach(function(option) {
+            key = path.basename(option, '.js');
+            required = require(files + option);
+            if (_.isFunction(required)) {
+                required = required(grunt);
+            }
+            object[key] = required;
+        });
+        return object;
+    }
 };
