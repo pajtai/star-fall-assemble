@@ -1,5 +1,5 @@
 /*global define:false */
-define(['./config', 'lodash'], function (config, _) {
+define(['lodash'], function (_) {
     'use strict';
 
     /**
@@ -9,17 +9,18 @@ define(['./config', 'lodash'], function (config, _) {
     var random = Math.random,
         floor = Math.floor,
         pi = Math.PI,
-        pi_0_0 = config.pi_0_0,
-        pi_0_5 = config.pi_0_5,
-        pi_1_0 = config.pi_1_0,
-        pi_1_5 = config.pi_1_5,
+        pi_0_0 = 0,
+        pi_0_5 = 0.5 * pi,
+        pi_1_0 = pi,
+        pi_1_5 = 1.5 * pi,
         focusColor = '#FF0000',
         blurColor = '#0000FF',
         bulletColor = '#00FF00',
-        UP = config.UP,
-        LEFT = config.LEFT,
-        RIGHT = config.RIGHT,
-        DOWN = config.DOWN,
+    // TODO: make loading equation for
+        UP = 38,
+        LEFT = 37,
+        RIGHT = 39,
+        DOWN = 40,
     // Create a cache of off screen canvases for performance
     // http://www.html5rocks.com/en/tutorials/canvas/performance/
         canvasCache = {

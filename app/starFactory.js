@@ -1,5 +1,5 @@
 /*global define:false */
-define(['./star', './config','lodash'], function (Star, config,_) {
+define(['square', './config','lodash'], function (Star, config,_) {
     'use strict';
 
     var stars = [],

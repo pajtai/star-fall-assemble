@@ -1,5 +1,5 @@
 /*global define:false */
-define(['jquery', './engine', './starFactory', './config', 'touchSwipe', './camera'], function ($, engine, starFactory, config, touchSwipe, camera) {
+define(['jquery', 'engine', './starFactory', './config', 'touchSwipe', 'camera'], function ($, engine, starFactory, config, touchSwipe, camera) {
     'use strict';
 
     // _Sprites from : http://forums.rpgmakerweb.com/index.php?/topic/866-zombie-sprites/_

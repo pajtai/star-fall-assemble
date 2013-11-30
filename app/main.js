@@ -8,6 +8,9 @@ require.config({
         jquery : 'vendor/jquery/jquery',
         touchSwipe : 'vendor/jquery-touchswipe/jquery.touchSwipe',
         deferredStateMachineFactory : 'vendor/deferred-state-machine/app/deferredStateMachineFactory',
+        engine : 'vendor/jagine/engine',
+        camera : 'vendor/jagine/camera',
+        square : 'vendor/jagine/square'
     }
 });
 
