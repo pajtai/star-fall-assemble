@@ -59,7 +59,7 @@ define(['lodash'], function (_) {
             stop : stop
         };
 
-    _.extend(Star.prototype, starPrototype);
+    _.extend(Square.prototype, starPrototype);
 
     /**
      * Gets a random int between min and max inclussive.
@@ -81,14 +81,14 @@ define(['lodash'], function (_) {
         return random() * (max - min) + min;
     }
 
-    Star.REGULAR = 'REGULAR';
-    Star.PLAYER = 'PLAYER';
-    Star.BULLET = 'BULLET';
-    Star.minSpeed = 0.005;
-    Star.maxSpeed = 0.025;
-    Star.minStarWidth = 5;
-    Star.maxStarWidth = 10;
-    Star.testMode = false;
+    Square.REGULAR = 'REGULAR';
+    Square.PLAYER = 'PLAYER';
+    Square.BULLET = 'BULLET';
+    Square.minSpeed = 0.005;
+    Square.maxSpeed = 0.025;
+    Square.minSquareWidth = 5;
+    Square.maxSquareWidth = 10;
+    Square.testMode = false;
     // TODO: create typeofstar arguments
 
     /**
@@ -100,40 +100,43 @@ define(['lodash'], function (_) {
      * @param width - optional override for width
      * @param speed - optional override for speed
      * @param directionRad - optional override for direction in radians
-     * @returns {Star}
+     * @returns {Square}
      * @constructor
      */
-    function Star (camera, starType, x, y, width, speed, directionRad) {
+    function Square (camera, starType, x, y, width, speed, directionRad) {
         var cacheObj,
             viewWindow = camera.getViewWindow();
 
 
-        if (!(this instanceof Star)) {
-            return new Star(viewWindow, starType, x, y, width, speed, directionRad);
+        if (!(this instanceof Square)) {
+            return new Square(viewWindow, starType, x, y, width, speed, directionRad);
         }
 
+        // TODO: remove dependence on camera
         this.camera = camera;
 
         // Pick a cardinal radian direction from 0 to 2pi
         this.directionRad = undefined === directionRad ? pi * (getRandomInt(0, 3) / 2) : directionRad;
-        this.width = undefined !== width ? width : getRandomInt(Star.minStarWidth, Star.maxStarWidth);
+        this.width = undefined !== width ? width : getRandomInt(Square.minSquareWidth, Square.maxSquareWidth);
         this.x = undefined !== x ? x : this.getInitialX(viewWindow.x, viewWindow.right);
         this.y = undefined !== y ? y : this.getInitialY(viewWindow.y, viewWindow.bottom);
 
         this.setOppositeCornerCoordinates();
+
+        // TODO: generalize
         switch (starType) {
-        case Star.PLAYER:
+        case Square.PLAYER:
             this.color = focusColor;
             break;
-        case Star.BULLET:
+        case Square.BULLET:
             this.color = bulletColor;
             break;
         default:
-        case Star.REGULAR:
+        case Square.REGULAR:
             this.color = blurColor;
             break;
         }
-        this.speed = undefined !== speed ? speed : (getRandomArbitrary(Star.minSpeed, Star.maxSpeed));
+        this.speed = undefined !== speed ? speed : (getRandomArbitrary(Square.minSpeed, Square.maxSpeed));
         this.type = starType;
         this.alive = true;
 
@@ -230,7 +233,7 @@ define(['lodash'], function (_) {
         this.setOppositeCornerCoordinates();
 
         // TODO: make this a little less primitive
-        if (! this.camera.visible(this) && !Star.testMode) {
+        if (! this.camera.visible(this) && !Square.testMode) {
             showing = false;
             this.kill();
         }
@@ -425,5 +428,5 @@ define(['lodash'], function (_) {
         return this.type;
     }
 
-    return Star;
+    return Square;
 });

@@ -17,11 +17,11 @@ define(['jquery', 'engine', './starFactory', './config', 'touchSwipe', 'camera']
 
     return {
         beginFalling : beginFalling,
-        createNewStar : createNewStar,
+        createNewSquare : createNewSquare,
         getDirectionFromTouch : getDirectionFromTouch,
         listenToKeys : listenToKeys,
         move : move,
-        nextStarInterval : 0,
+        nextSquareInterval : 0,
         previousFps : 0,
         starIntervalMs : 200,
         shoot : shoot,
@@ -54,13 +54,13 @@ define(['jquery', 'engine', './starFactory', './config', 'touchSwipe', 'camera']
             right : this.canvas.width,
             bottom : this.canvas.height
         });
-        camera.loadRenderArray(starFactory.getStarsArray());
+        camera.loadRenderArray(starFactory.getSquaresArray());
 
         starFactory.loadContext(this);
         // TODO: camera is being injected into too many objects
         starFactory.setCamera(camera);
         starFactory.setPlayer(
-            this.createNewStar(
+            this.createNewSquare(
                 starFactory.PLAYER,
                 0,
                 0,
@@ -121,7 +121,7 @@ define(['jquery', 'engine', './starFactory', './config', 'touchSwipe', 'camera']
                 break;
             }
         }
-        this.score += starFactory.updateStars(dt, gameTimeStamp);
+        this.score += starFactory.updateSquares(dt, gameTimeStamp);
         if (this.nextScoreInterval < this.nextScoreCounter) {
             this.$score.text(this.score);
             this.nextScoreCounter = 0;
@@ -129,8 +129,8 @@ define(['jquery', 'engine', './starFactory', './config', 'touchSwipe', 'camera']
         camera.centerOn(starFactory.getPlayer());
         camera.render();
 
-        if (gameTimeStamp >= this.nextStarInterval) {
-            this.createNewStar();
+        if (gameTimeStamp >= this.nextSquareInterval) {
+            this.createNewSquare();
         }
         player = starFactory.getPlayer();
 
@@ -138,9 +138,9 @@ define(['jquery', 'engine', './starFactory', './config', 'touchSwipe', 'camera']
     }
 
     // TODO: create attributes object
-    function createNewStar (starType, x, y, width, speed) {
-        this.nextStarInterval += this.starIntervalMs;
-        return starFactory.createStar(starType || starFactory.REGULAR, x, y, width, speed);
+    function createNewSquare (starType, x, y, width, speed) {
+        this.nextSquareInterval += this.starIntervalMs;
+        return starFactory.createSquare(starType || starFactory.REGULAR, x, y, width, speed);
     }
 
     function listenToKeys () {

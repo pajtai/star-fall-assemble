@@ -1,5 +1,5 @@
 /*global define:false */
-define(['square', './config','lodash'], function (Star, config,_) {
+define(['square', './config','lodash'], function (Square, config,_) {
     'use strict';
 
     var stars = [],
@@ -20,27 +20,27 @@ define(['square', './config','lodash'], function (Star, config,_) {
         floor = Math.floor,
         ceil = Math.ceil;
 
-    Star.testMode = testMode;
+    Square.testMode = testMode;
 
     // TODO: create a star manager
     return {
 
-        PLAYER: Star.PLAYER,
-        BULLET: Star.BULLET,
-        REGULAR: Star.REGULAR,
+        PLAYER: Square.PLAYER,
+        BULLET: Square.BULLET,
+        REGULAR: Square.REGULAR,
 
         closestToThe : closestToThe,
         collidesWith : collidesWith,
         collisionsInList : collisionsInList,
-        createStar : createStar,
+        createSquare : createSquare,
         each : each,
         getPlayer : getPlayer,
-        getStarsArray : getStarsArray,
+        getSquaresArray : getSquaresArray,
         loadContext : loadContext,
         setCamera : setCamera,
         setPlayer : setPlayer,
         shootFrom : shootFrom,
-        updateStars : updateStars
+        updateSquares : updateSquares
     };
 
     function loadContext (context) {
@@ -55,25 +55,25 @@ define(['square', './config','lodash'], function (Star, config,_) {
      * @param width
      * @param speed
      * @param directionRad
-     * @returns {Star}
+     * @returns {Square}
      */
-    function createStar (starType, x, y, width, speed, directionRad) {
-        var star = new Star(this.camera, starType, x, y, width, speed, directionRad);
+    function createSquare (starType, x, y, width, speed, directionRad) {
+        var star = new Square(this.camera, starType, x, y, width, speed, directionRad);
         stars.push(star);
         return star;
     }
 
-    function getStarsArray () {
+    function getSquaresArray () {
         return stars;
     }
 
-    function updateStars (dt, gameTimeStamp) {
+    function updateSquares (dt, gameTimeStamp) {
 
         var remove = [],
             collisions = [],
             doneIndices = [],
             plusScore = 0,
-            scoreStars = [];
+            scoreSquares = [];
 
         _.each(stars, function (star, index) {
             if (!star.move(dt)) {
@@ -87,11 +87,11 @@ define(['square', './config','lodash'], function (Star, config,_) {
                 collisions.push(collision[0]);
                 collisions.push(collision[1]);
                 if (config.score.bulletCollisions) {
-                    if (Star.BULLET === stars[collision[0]].getType()) {
-                        scoreStars.push(stars[collision[0]]);
+                    if (Square.BULLET === stars[collision[0]].getType()) {
+                        scoreSquares.push(stars[collision[0]]);
                     }
-                    if (Star.BULLET === stars[collision[1]].getType()) {
-                        scoreStars.push(stars[collision[1]]);
+                    if (Square.BULLET === stars[collision[1]].getType()) {
+                        scoreSquares.push(stars[collision[1]]);
                     }
                 }
                 star1 = stars[collision[0]];
@@ -118,8 +118,8 @@ define(['square', './config','lodash'], function (Star, config,_) {
                 doneIndices[itemIndex] = true;
             }
         });
-        scoreStars = _.uniq(scoreStars);
-        _.each(scoreStars, function() {
+        scoreSquares = _.uniq(scoreSquares);
+        _.each(scoreSquares, function() {
             plusScore += config.score.points.collision;
         });
         return plusScore;
@@ -134,7 +134,7 @@ define(['square', './config','lodash'], function (Star, config,_) {
 
     /**
      * Returns true if this star collides with another.
-     * Stars are rectangles.
+     * Squares are rectangles.
      * @param star1
      * @param star2
      * @returns {boolean}
@@ -246,7 +246,7 @@ define(['square', './config','lodash'], function (Star, config,_) {
         // TODO: replace hard coded color with type - bullet
         switch (direction) {
         case SHOOT_UP:
-            this.createStar(Star.BULLET
+            this.createSquare(Square.BULLET
                 , floor(player.x + player.width/2 - width/2)
                 , floor(player.y - width)
                 , width
@@ -254,7 +254,7 @@ define(['square', './config','lodash'], function (Star, config,_) {
                 , pi_1_5);
             break;
         case SHOOT_DOWN:
-            this.createStar(Star.BULLET
+            this.createSquare(Square.BULLET
                 , floor(player.x + player.width/2 - width/2)
                 , ceil(player.bottom)
                 , width
@@ -262,7 +262,7 @@ define(['square', './config','lodash'], function (Star, config,_) {
                 , pi_0_5);
             break;
         case SHOOT_LEFT:
-            this.createStar(Star.BULLET
+            this.createSquare(Square.BULLET
                 , floor(player.x - player.width)
                 , floor(player.y + player.width/2 - width/2)
                 , width
@@ -270,7 +270,7 @@ define(['square', './config','lodash'], function (Star, config,_) {
                 , pi_1_0);
             break;
         case SHOOT_RIGHT:
-            this.createStar(Star.BULLET
+            this.createSquare(Square.BULLET
                 , ceil(player.right)
                 , floor(player.y + player.width/2 - width/2)
                 , width
