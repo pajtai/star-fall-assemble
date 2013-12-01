@@ -1,0 +1,25 @@
+{
+  "name": "deferredStateMachine",
+  "dependencies": {
+    "jquery": "~2.0.3",
+    "requirejs": "~2.1.8"
+  },
+  "devDependencies": {
+    "mocha": "~1.12.1",
+    "chai": "~1.7.2",
+    "squire": "*",
+    "sinon": "~1.7.3",
+    "sinon-chai": "~2.4.0"
+  },
+  "homepage": "https://github.com/Solid-Interactive/deferred-state-machine",
+  "version": "0.0.4",
+  "_release": "0.0.4",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.0.4",
+    "commit": "7dcae1af6d32341dc5ac267e86637ffbecbb22a6"
+  },
+  "_source": "git://github.com/Solid-Interactive/deferred-state-machine.git",
+  "_target": "~0.0.4",
+  "_originalSource": "deferred-state-machine"
+}

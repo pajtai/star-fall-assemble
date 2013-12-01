@@ -14,7 +14,15 @@ module.exports = {
     },
     app : {
         options : {
-            base : './app'
+            base : './app',
+            open : true
+        }
+    },
+    deploy : {
+        options : {
+            base : './build',
+            keepalive : true,
+            open : true
         }
     },
     tests : {

@@ -8,7 +8,7 @@ module.exports = function (grunt) {
     // load all grunt tasks
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
-    grunt.initConfig(loadConfig('./tasks/options/'));
+    grunt.initConfig(loadConfig('./initConfig/'));
 
     grunt.registerTask('rewriteIndex', function() {
         var index = grunt.file.read('build/index.html');
@@ -18,7 +18,21 @@ module.exports = function (grunt) {
     });
 
     // To start editing your slideshow using livereload, run 'grunt server'
-    grunt.registerTask('server', 'Build and watch task', ['jshint', 'connect:app',  'open:app', 'watch']);
+    grunt.registerTask('server', 'Build and watch task',
+        [
+            'jshint',
+            'connect:app',
+            'watch'
+        ]);
+    grunt.registerTask('testDeploy', 'Build and watch task',
+        [
+            'jshint',
+            'clean:build',
+            'copy:build',
+            'requirejs',
+            'rewriteIndex',
+            'connect:deploy'
+        ]);
     grunt.registerTask('testServer', 'Build and watch task', ['connect:tests',  'open:tests', 'watch']);
     grunt.registerTask('deploy', 'Deploy website to gh-pages',
         [

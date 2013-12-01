@@ -5,7 +5,7 @@ module.exports = {
                 baseUrl: "app",
                 mainConfigFile: "app/main.js",
                 out: "build/main.js",
-                include : "vendor/requirejs/require.js",
+                include : "vendor/almond/almond.js",
                 preserveLicenseComments: false,
                 optimize: "uglify2"
         }

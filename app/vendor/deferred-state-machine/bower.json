@@ -2,11 +2,7 @@
   "name": "deferredStateMachine",
   "dependencies": {
     "jquery": "~2.0.3",
-    "requirejs": "~2.1.8",
-    "deferred-state-machine": "~0.0.4",
-    "lodash-amd": "~2.3.0",
-    "jquery-touchswipe": "~1.6.4",
-    "almond": "~0.2.7"
+    "requirejs": "~2.1.8"
   },
   "devDependencies": {
     "mocha": "~1.12.1",
