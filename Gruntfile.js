@@ -5,10 +5,7 @@ module.exports = function (grunt) {
 
     var _ = grunt.util._;
 
-    // load all grunt tasks
-    require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
-
-    grunt.initConfig(loadConfig('./initConfig/'));
+    loadGruntConfigAndDependencies('./initConfig/');
 
     grunt.registerTask('rewriteIndex', function() {
         var index = grunt.file.read('build/index.html');
@@ -42,6 +39,11 @@ module.exports = function (grunt) {
             'rewriteIndex',
             'build_gh_pages:build'
         ]);
+
+    function loadGruntConfigAndDependencies (files) {
+        require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
+        grunt.initConfig(loadConfig(files));
+    }
 
     function loadConfig(files) {
         var path = require('path'),
