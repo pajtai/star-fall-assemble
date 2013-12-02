@@ -1,5 +1,5 @@
 /*global define:false */
-define(['./square', './../../config','lodash'], function (Square, config,_) {
+define(['./square','lodash'], function (Square,_) {
     'use strict';
 
     var stars = [],
@@ -19,8 +19,6 @@ define(['./square', './../../config','lodash'], function (Square, config,_) {
         testMode,
         floor = Math.floor,
         ceil = Math.ceil;
-
-    Square.testMode = testMode;
 
     // TODO: create a star manager
     return {
