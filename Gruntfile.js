@@ -44,20 +44,19 @@ module.exports = function (grunt) {
         ]);
 
     function loadConfig(files) {
-        var glob = require('glob'),
-            path = require('path'),
-            object = {},
-            key,
-            required;
+        var path = require('path'),
+            object = {};
 
-        glob.sync('*', {cwd: files}).forEach(function(option) {
-            key = path.basename(option, '.js');
-            required = require(files + option);
+        grunt.file.recurse(files, function callback(abspath, rootdir, subdir, filename) {
+            var name = path.basename(filename, path.extname(filename)),
+                required = require(path.resolve('.', abspath));
+
             if (_.isFunction(required)) {
                 required = required(grunt);
             }
-            object[key] = required;
+            object[name] = required;
         });
+
         return object;
     }
 };
