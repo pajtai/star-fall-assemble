@@ -1,22 +1,22 @@
 /*global define:false */
-define(['square', './config','lodash'], function (Square, config,_) {
+define(['./square', './../../config','lodash'], function (Square, config,_) {
     'use strict';
 
     var stars = [],
         player,
-        UP = config.UP,
-        LEFT = config.LEFT,
-        RIGHT = config.RIGHT,
-        DOWN = config.DOWN,
-        SHOOT_UP = config.SHOOT_UP,
-        SHOOT_LEFT = config.SHOOT_LEFT,
-        SHOOT_RIGHT = config.SHOOT_RIGHT,
-        SHOOT_DOWN = config.SHOOT_DOWN,
-        pi_0_0 = config.pi_0_0,
-        pi_0_5 = config.pi_0_5,
-        pi_1_0 = config.pi_1_0,
-        pi_1_5 = config.pi_1_5,
-        testMode = config.testMode,
+        UP,
+        LEFT,
+        RIGHT,
+        DOWN,
+        SHOOT_UP,
+        SHOOT_LEFT,
+        SHOOT_RIGHT,
+        SHOOT_DOWN,
+        pi_0_0,
+        pi_0_5,
+        pi_1_0,
+        pi_1_5,
+        testMode,
         floor = Math.floor,
         ceil = Math.ceil;
 
@@ -36,12 +36,29 @@ define(['square', './config','lodash'], function (Square, config,_) {
         each : each,
         getPlayer : getPlayer,
         getSquaresArray : getSquaresArray,
+        loadConfig : loadConfig,
         loadContext : loadContext,
         setCamera : setCamera,
         setPlayer : setPlayer,
         shootFrom : shootFrom,
         updateSquares : updateSquares
     };
+
+    function loadConfig (config) {
+        UP = config.UP;
+        LEFT = config.LEFT;
+        RIGHT = config.RIGHT;
+        DOWN = config.DOWN;
+        SHOOT_UP = config.SHOOT_UP;
+        SHOOT_LEFT = config.SHOOT_LEFT;
+        SHOOT_RIGHT = config.SHOOT_RIGHT;
+        SHOOT_DOWN = config.SHOOT_DOWN;
+        pi_0_0 = config.pi_0_0;
+        pi_0_5 = config.pi_0_5;
+        pi_1_0 = config.pi_1_0;
+        pi_1_5 = config.pi_1_5;
+        testMode = config.testMode;
+    }
 
     function loadContext (context) {
         this.context = context;

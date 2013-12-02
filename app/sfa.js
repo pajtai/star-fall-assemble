@@ -1,10 +1,14 @@
 /*global define:false */
-define(['jquery', 'engine', './starFactory', './config', 'touchSwipe', 'camera'], function ($, engine, starFactory, config, touchSwipe, camera) {
+define([
+    'jquery',
+    './config',
+    'touchSwipe',
+    'jagine'], function ($, config, touchSwipe, JAG) {
+
     'use strict';
 
     // _Sprites from : http://forums.rpgmakerweb.com/index.php?/topic/866-zombie-sprites/_
-    // TODO: why are boxes rectangular if body {height:100%}?
-    // TODO: move directions into config file
+    // TODO: create load config function
     var UP = config.UP,
         LEFT = config.LEFT,
         RIGHT = config.RIGHT,
@@ -47,33 +51,34 @@ define(['jquery', 'engine', './starFactory', './config', 'touchSwipe', 'camera']
         };
         this.context = this.canvas.getContext('2d');
 
-        camera.loadCanvasContext(this.context);
-        camera.setViewWindow({
+        JAG.camera.loadCanvasContext(this.context);
+        JAG.camera.setViewWindow({
             x : 0,
             y : 0,
             right : this.canvas.width,
             bottom : this.canvas.height
         });
-        camera.loadRenderArray(starFactory.getSquaresArray());
+        JAG.camera.loadRenderArray(JAG.starFactory.getSquaresArray());
 
-        starFactory.loadContext(this);
+        JAG.starFactory.loadConfig(config);
+        JAG.starFactory.loadContext(this);
         // TODO: camera is being injected into too many objects
-        starFactory.setCamera(camera);
-        starFactory.setPlayer(
+        JAG.starFactory.setCamera(JAG.camera);
+        JAG.starFactory.setPlayer(
             this.createNewSquare(
-                starFactory.PLAYER,
+                JAG.starFactory.PLAYER,
                 0,
                 0,
                 width,
                 0
         ));
 
-        engine.config({
+        JAG.engine.config({
             context : this,
             update : this.update,
             stop : this.stop
         });
-        engine.start();
+        JAG.engine.start();
         // TODO: move player somewhere else
 
         if (window.DocumentTouch && document instanceof DocumentTouch) {
@@ -121,18 +126,18 @@ define(['jquery', 'engine', './starFactory', './config', 'touchSwipe', 'camera']
                 break;
             }
         }
-        this.score += starFactory.updateSquares(dt, gameTimeStamp);
+        this.score += JAG.starFactory.updateSquares(dt, gameTimeStamp);
         if (this.nextScoreInterval < this.nextScoreCounter) {
             this.$score.text(this.score);
             this.nextScoreCounter = 0;
         }
-        camera.centerOn(starFactory.getPlayer());
-        camera.render();
+        JAG.camera.centerOn(JAG.starFactory.getPlayer());
+        JAG.camera.render();
 
         if (gameTimeStamp >= this.nextSquareInterval) {
             this.createNewSquare();
         }
-        player = starFactory.getPlayer();
+        player = JAG.starFactory.getPlayer();
 
         return player ? player.isAlive() : true;
     }
@@ -140,14 +145,14 @@ define(['jquery', 'engine', './starFactory', './config', 'touchSwipe', 'camera']
     // TODO: create attributes object
     function createNewSquare (starType, x, y, width, speed) {
         this.nextSquareInterval += this.starIntervalMs;
-        return starFactory.createSquare(starType || starFactory.REGULAR, x, y, width, speed);
+        return JAG.starFactory.createSquare(starType || JAG.starFactory.REGULAR, x, y, width, speed);
     }
 
     function listenToKeys () {
         var $body = $('body'),
             self = this;
         $body.keydown(function (event) {
-            engine.keypress(event);
+            JAG.engine.keypress(event);
         });
         //
         $body.swipe({
@@ -170,7 +175,7 @@ define(['jquery', 'engine', './starFactory', './config', 'touchSwipe', 'camera']
                     swipe = {};
                     swipe.preventDefault = event.preventDefault.bind(event);
                     swipe.which = self.getDirectionFromTouch(event, direction, distance);
-                    engine.keypress(swipe);
+                    JAG.engine.keypress(swipe);
                     break;
                 }
 
@@ -200,20 +205,20 @@ define(['jquery', 'engine', './starFactory', './config', 'touchSwipe', 'camera']
     }
 
     function move (direction) {
-        var player = starFactory.getPlayer(),
-            closest = starFactory.closestToThe(player, direction);
+        var player = JAG.starFactory.getPlayer(),
+            closest = JAG.starFactory.closestToThe(player, direction);
 
         if (closest) {
             player.blur();
             if (player.isAlive()) {
-                starFactory.setPlayer(closest);
+                JAG.starFactory.setPlayer(closest);
                 closest.focus();
             }
         }
     }
 
     function shoot (direction) {
-        starFactory.shootFrom(starFactory.getPlayer(), direction);
+        JAG.starFactory.shootFrom(JAG.starFactory.getPlayer(), direction);
     }
 
     function stop () {
