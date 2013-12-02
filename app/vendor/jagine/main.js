@@ -6,14 +6,14 @@ define([
     './starFactory',
     './util'], function(camera, engine, sprite, square, starFactory, util) {
 
-    var JAG = {};
-
-    JAG.camera = camera;
-    JAG.engine = engine;
-    JAG.sprite = sprite;
-    JAG.square = square;
-    JAG.starFactory = starFactory;
-    JAG.util = util;
+    var JAG = {
+        camera : camera,
+        engine : engine,
+        sprite : sprite,
+        square : square,
+        starFactory : starFactory,
+        util : util
+    };
 
     return JAG;
 });

@@ -4,6 +4,7 @@ define(['./square','lodash'], function (Square,_) {
 
     var stars = [],
         player,
+        score,
         UP,
         LEFT,
         RIGHT,
@@ -56,6 +57,7 @@ define(['./square','lodash'], function (Square,_) {
         pi_1_0 = config.pi_1_0;
         pi_1_5 = config.pi_1_5;
         testMode = config.testMode;
+        score = config.score;
     }
 
     function loadContext (context) {
@@ -101,7 +103,7 @@ define(['./square','lodash'], function (Square,_) {
                 var star1, star2;
                 collisions.push(collision[0]);
                 collisions.push(collision[1]);
-                if (config.score.bulletCollisions) {
+                if (score.bulletCollisions) {
                     if (Square.BULLET === stars[collision[0]].getType()) {
                         scoreSquares.push(stars[collision[0]]);
                     }
@@ -135,7 +137,7 @@ define(['./square','lodash'], function (Square,_) {
         });
         scoreSquares = _.uniq(scoreSquares);
         _.each(scoreSquares, function() {
-            plusScore += config.score.points.collision;
+            plusScore += score.points.collision;
         });
         return plusScore;
     }
