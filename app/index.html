@@ -36,9 +36,20 @@
                 background-color: #00FF00;
                 padding:3px;
             }
+            #modal {
+                width:100%;
+                height:100%;
+                position : absolute;
+                top: 0;
+                left: 0;
+                color: #FFFFFF;
+                background-color: #000000;
+                z-index: 99999;
+            }
         </style>
     </head>
     <body>
+        <div id="modal"></div>
         <canvas id="game"></canvas>
         <div id="fps">0</div>
         <div id="instructions"><h3>UP, DOWN, LEFT, RIGHT to jump focus<br/>

@@ -1,6 +1,7 @@
 /*global define:false */
 define(['lodash'], function (_) {
 
+    // TODO: lock down width and height and set view window with only x,y - create setWidth, setHeight methods
     var floor = Math.floor,
         dotCache = (function() {
             var canvas = document.createElement('canvas'),

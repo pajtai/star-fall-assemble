@@ -15,5 +15,5 @@ require.config({
 require([
     'sfa'
 ], function (SFA) {
-    SFA.beginFalling();
+    SFA.begin();
 });

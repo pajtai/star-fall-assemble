@@ -1,5 +1,5 @@
 /*global define:false */
-define(['./square','lodash'], function (Square,_) {
+define(['./square', 'lodash'], function (Square, _) {
     'use strict';
 
     var stars = [],
@@ -24,9 +24,9 @@ define(['./square','lodash'], function (Square,_) {
     // TODO: create a star manager
     return {
 
-        PLAYER: Square.PLAYER,
-        BULLET: Square.BULLET,
-        REGULAR: Square.REGULAR,
+        PLAYER : Square.PLAYER,
+        BULLET : Square.BULLET,
+        REGULAR : Square.REGULAR,
 
         closestToThe : closestToThe,
         collidesWith : collidesWith,
@@ -34,6 +34,7 @@ define(['./square','lodash'], function (Square,_) {
         createSquare : createSquare,
         each : each,
         getPlayer : getPlayer,
+        getNewSquaresArray : getNewSquaresArray,
         getSquaresArray : getSquaresArray,
         loadConfig : loadConfig,
         loadContext : loadContext,
@@ -78,6 +79,11 @@ define(['./square','lodash'], function (Square,_) {
         var star = new Square(this.camera, starType, x, y, width, speed, directionRad);
         stars.push(star);
         return star;
+    }
+
+    function getNewSquaresArray () {
+        stars = [];
+        return this.getSquaresArray();
     }
 
     function getSquaresArray () {
@@ -136,7 +142,7 @@ define(['./square','lodash'], function (Square,_) {
             }
         });
         scoreSquares = _.uniq(scoreSquares);
-        _.each(scoreSquares, function() {
+        _.each(scoreSquares, function () {
             plusScore += score.points.collision;
         });
         return plusScore;
@@ -211,7 +217,7 @@ define(['./square','lodash'], function (Square,_) {
         return combos;
     }
 
-    function assignClosest(closest, candidate, distance) {
+    function assignClosest (closest, candidate, distance) {
         if (!closest.star) {
             closest.star = candidate;
             closest.distance = distance;
@@ -225,12 +231,12 @@ define(['./square','lodash'], function (Square,_) {
 
     function closestToThe (star, direction) {
         var closest = {
-            star: undefined,
-            distance: undefined
+                star : undefined,
+                distance : undefined
             },
             distance;
 
-        _.each(stars, function(candidate) {
+        _.each(stars, function (candidate) {
             switch (direction) {
             case UP:
             case LEFT:
@@ -238,7 +244,7 @@ define(['./square','lodash'], function (Square,_) {
             case RIGHT:
                 if (candidate.is(direction, star)) {
                     distance = candidate.distance(direction, star);
-                        assignClosest(closest, candidate, distance);
+                    assignClosest(closest, candidate, distance);
                 }
                 break;
             }
@@ -249,22 +255,22 @@ define(['./square','lodash'], function (Square,_) {
         return closest.star;
     }
 
-    function setPlayer(thePlayer) {
+    function setPlayer (thePlayer) {
         player = thePlayer;
     }
 
-    function getPlayer() {
+    function getPlayer () {
         return player;
     }
 
-    function shootFrom(player, direction) {
+    function shootFrom (player, direction) {
         var width = 5,
             speed = 0.1;
         // TODO: replace hard coded color with type - bullet
         switch (direction) {
         case SHOOT_UP:
             this.createSquare(Square.BULLET
-                , floor(player.x + player.width/2 - width/2)
+                , floor(player.x + player.width / 2 - width / 2)
                 , floor(player.y - width)
                 , width
                 , speed
@@ -272,7 +278,7 @@ define(['./square','lodash'], function (Square,_) {
             break;
         case SHOOT_DOWN:
             this.createSquare(Square.BULLET
-                , floor(player.x + player.width/2 - width/2)
+                , floor(player.x + player.width / 2 - width / 2)
                 , ceil(player.bottom)
                 , width
                 , speed
@@ -281,7 +287,7 @@ define(['./square','lodash'], function (Square,_) {
         case SHOOT_LEFT:
             this.createSquare(Square.BULLET
                 , floor(player.x - player.width)
-                , floor(player.y + player.width/2 - width/2)
+                , floor(player.y + player.width / 2 - width / 2)
                 , width
                 , speed
                 , pi_1_0);
@@ -289,7 +295,7 @@ define(['./square','lodash'], function (Square,_) {
         case SHOOT_RIGHT:
             this.createSquare(Square.BULLET
                 , ceil(player.right)
-                , floor(player.y + player.width/2 - width/2)
+                , floor(player.y + player.width / 2 - width / 2)
                 , width
                 , speed
                 , pi_0_0);
@@ -297,7 +303,7 @@ define(['./square','lodash'], function (Square,_) {
         }
     }
 
-    function setCamera(camera) {
+    function setCamera (camera) {
         this.camera = camera;
     }
 });

@@ -3,7 +3,8 @@ define([
     'jquery',
     './config',
     'touchSwipe',
-    'jagine'], function ($, config, touchSwipe, JAG) {
+    'jagine',
+    'lodash'], function ($, config, touchSwipe, JAG, _i) {
 
     'use strict';
 
@@ -20,25 +21,59 @@ define([
         cached_start_x;
 
     return {
-        beginFalling : beginFalling,
-        createNewSquare : createNewSquare,
+        begin : begin,
+        createNewZombie : createNewZobie,
         getDirectionFromTouch : getDirectionFromTouch,
         listenToKeys : listenToKeys,
         move : move,
+        initializeCamera : initializeCamera,
+        initializeFields : initializeFields,
+        initializeSquareFactory : initializeSquareFactory,
         nextSquareInterval : 0,
         previousFps : 0,
         starIntervalMs : 200,
         shoot : shoot,
         stars : [],
         stop : stop,
-        update : update
+        update : update,
+        $score : undefined,
+        $window : undefined,
+        $fps : undefined,
+        $modal : undefined,
+        canvas : undefined,
+        size : undefined,
+        score : undefined,
+        startEngine : startEngine,
+        nextScoreInterval : undefined,
+        nextScoreCounter : undefined
     };
 
-    function beginFalling () {
-        var $game = $('#game'),
-            width = 10,
-            $instructions = $('#instructions');
+    function begin () {
+        var $instructions = $('#instructions'),
+            self = this;
+        this.initializeFields();
+        JAG.sprites.loadSpriteResource('imgs/zombie_sprites.png')
+            .done(function(spriteKey) {
+                self.spriteKey = spriteKey;
+                self.initializeCamera();
+                self.initializeSquareFactory();
+                self.startEngine();
+                self.listenToKeys();
+            });
+
+        if (window.DocumentTouch && document instanceof DocumentTouch) {
+            $instructions.html('<h3>Swipe on left side of screen to jump focus<br/>Swipe on right side of screen to shoot</h3>');
+        }
+        setTimeout(function () {
+            $instructions.remove();
+        }, 3000);
+    }
+
+    function initializeFields () {
+        var $game = $('#game');
         this.$score = $('#score');
+        this.$modal = $('#modal');
+        this.$modal.hide();
         this.$window = $(window);
         this.score = 0;
         this.nextScoreInterval = 500;
@@ -50,7 +85,9 @@ define([
             domHeight : this.$window.height()
         };
         this.context = this.canvas.getContext('2d');
+    }
 
+    function initializeCamera () {
         JAG.camera.loadCanvasContext(this.context);
         JAG.camera.setViewWindow({
             x : 0,
@@ -58,37 +95,37 @@ define([
             right : this.canvas.width,
             bottom : this.canvas.height
         });
-        JAG.camera.loadRenderArray(JAG.starFactory.getSquaresArray());
+        JAG.camera.loadRenderArray(JAG.squareFactory.getNewSquaresArray());
 
-        JAG.starFactory.loadConfig(config);
-        JAG.starFactory.loadContext(this);
+    }
+
+    function initializeSquareFactory () {
+        var width = 10;
+        JAG.squareFactory.loadConfig(config);
+        JAG.squareFactory.loadContext(this);
         // TODO: camera is being injected into too many objects
-        JAG.starFactory.setCamera(JAG.camera);
-        JAG.starFactory.setPlayer(
-            this.createNewSquare(
-                JAG.starFactory.PLAYER,
+        JAG.squareFactory.setCamera(JAG.camera);
+
+
+        //JAG.spriteManager.loadSprite()
+
+        JAG.squareFactory.setPlayer(
+            this.createNewZombie(
+                JAG.squareFactory.PLAYER,
                 0,
                 0,
                 width,
                 0
-        ));
+            ));
+    }
 
+    function startEngine () {
         JAG.engine.config({
             context : this,
             update : this.update,
             stop : this.stop
         });
         JAG.engine.start();
-        // TODO: move player somewhere else
-
-        if (window.DocumentTouch && document instanceof DocumentTouch) {
-            $instructions.html('<h3>Swipe on left side of screen to jump focus<br/>Swipe on right side of screen to shoot</h3>');
-        }
-        setTimeout(function () {
-            $instructions.remove();
-        }, 3000);
-
-        this.listenToKeys();
     }
 
     function update (dt, gameTimeStamp, fps, keypresses) {
@@ -126,26 +163,26 @@ define([
                 break;
             }
         }
-        this.score += JAG.starFactory.updateSquares(dt, gameTimeStamp);
+        this.score += JAG.squareFactory.updateSquares(dt, gameTimeStamp);
         if (this.nextScoreInterval < this.nextScoreCounter) {
             this.$score.text(this.score);
             this.nextScoreCounter = 0;
         }
-        JAG.camera.centerOn(JAG.starFactory.getPlayer());
+        JAG.camera.centerOn(JAG.squareFactory.getPlayer());
         JAG.camera.render();
 
         if (gameTimeStamp >= this.nextSquareInterval) {
-            this.createNewSquare();
+            this.createNewZombie();
         }
-        player = JAG.starFactory.getPlayer();
+        player = JAG.squareFactory.getPlayer();
 
         return player ? player.isAlive() : true;
     }
 
     // TODO: create attributes object
-    function createNewSquare (starType, x, y, width, speed) {
+    function createNewZobie (starType, x, y, width, speed) {
         this.nextSquareInterval += this.starIntervalMs;
-        return JAG.starFactory.createSquare(starType || JAG.starFactory.REGULAR, x, y, width, speed);
+        return JAG.squareFactory.createSquare(starType || JAG.squareFactory.REGULAR, x, y, width, speed);
     }
 
     function listenToKeys () {
@@ -156,8 +193,7 @@ define([
         });
         //
         $body.swipe({
-            swipeStatus:function(event, phase, direction, distance, duration, fingers)
-            {
+            swipeStatus : function (event, phase, direction, distance, duration, fingers) {
                 var START = 'start',
                     END = 'end',
                     swipe;
@@ -185,12 +221,12 @@ define([
         });
     }
 
-    function getDirectionFromTouch(event, direction, distance) {
+    function getDirectionFromTouch (event, direction, distance) {
 
         var cutoff = this.size.domWidth / 2,
             theX = cached_start_x || event.x;
         cached_start_x = undefined;
-        switch(direction) {
+        switch (direction) {
         case 'up':
             return theX < cutoff ? UP : SHOOT_UP;
         case 'down':
@@ -205,23 +241,32 @@ define([
     }
 
     function move (direction) {
-        var player = JAG.starFactory.getPlayer(),
-            closest = JAG.starFactory.closestToThe(player, direction);
+        var player = JAG.squareFactory.getPlayer(),
+            closest = JAG.squareFactory.closestToThe(player, direction);
 
         if (closest) {
             player.blur();
             if (player.isAlive()) {
-                JAG.starFactory.setPlayer(closest);
+                JAG.squareFactory.setPlayer(closest);
                 closest.focus();
             }
         }
     }
 
     function shoot (direction) {
-        JAG.starFactory.shootFrom(JAG.starFactory.getPlayer(), direction);
+        JAG.squareFactory.shootFrom(JAG.squareFactory.getPlayer(), direction);
     }
 
     function stop () {
+        var self = this;
+        this.$score.text(this.score);
         this.$fps.text('Game Over');
+
+        // TODO: real modal that is centered - possibly tying in with jagine
+        // TODO: figure out why reloading game doesn't show squares for a few seconds
+        this.$modal.show().html('<div>Your score was: ' + this.score + '<br/><br/>Click here to play again</div>').on('click', function() {
+            self.begin();
+            $(this).hide();
+        }, undefined, undefined, 1);
     }
 });

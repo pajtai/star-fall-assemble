@@ -3,15 +3,17 @@ define([
     './engine',
     './sprite',
     './square',
-    './starFactory',
-    './util'], function(camera, engine, sprite, square, starFactory, util) {
+    './squareFactory',
+    './sprites',
+    './util'], function(camera, engine, sprite, square, squareFactory, sprites, util) {
 
     var JAG = {
         camera : camera,
         engine : engine,
         sprite : sprite,
         square : square,
-        starFactory : starFactory,
+        squareFactory : squareFactory,
+        sprites : sprites,
         util : util
     };
 
