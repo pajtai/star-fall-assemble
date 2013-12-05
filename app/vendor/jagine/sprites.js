@@ -1,13 +1,19 @@
-define(['jquery'], function($) {
+define(['jquery', './sprite'], function($, Sprite) {
 
     var uniq = 0,
         imageCache = {};
 
     return {
-        loadSpriteResource : loadSpriteResource
+        createSpriteFromResource : createSpriteFromResource,
+        loadResource : loadResource
     }
 
-    function loadSpriteResource (src) {
+    /**
+     * Load an image for later use.
+     * @param src
+     * @returns {*|promise}
+     */
+    function loadResource (src) {
         var $deferred = new $.Deferred(),
             cachedObject;
 
@@ -15,17 +21,32 @@ define(['jquery'], function($) {
             $deferred.resolve(cachedObject.key);
         } else {
             cachedObject = {
-                img : new Image(),
-                key : ++uniq
+                img : new Image()
             };
             imageCache[src] = cachedObject;
             cachedObject.img.addEventListener('load', function() {
-                $deferred.resolve(cachedObject.key);
+                $deferred.resolve();
+            });
+            cachedObject.img.addEventListener('error', function() {
+                $deferred.reject();
             });
             cachedObject.img.src = src;
         }
 
-        return $deferred;
+        return $deferred.promise();
+    }
+
+    /**
+     * Create a sprite sheet.
+     * @param src
+     * @param rows
+     * @param cols
+     * @returns {*|promise}
+     */
+    function createSpriteFromResource (src, rows, cols) {
+        var $deferred = new $.Deferred();
+        new Sprite(imageCache[src], rows, cols);
+        return $deferred.promise();
     }
 
 });

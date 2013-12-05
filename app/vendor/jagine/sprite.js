@@ -3,9 +3,8 @@ define(['lodash'], function (_) {
 
     return Sprite;
 
-    function Sprite(path, rows, cols) {
-        this.image = new Image();
-        this.image.src = path;
+    function Sprite(image, rows, cols) {
+        this.image = image;
         this.rows = rows;
         this.cols = cols;
     }

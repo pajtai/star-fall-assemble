@@ -52,7 +52,7 @@ define([
         var $instructions = $('#instructions'),
             self = this;
         this.initializeFields();
-        JAG.sprites.loadSpriteResource('imgs/zombie_sprites.png')
+        JAG.sprites.loadResource('imgs/zombie_sprites.png')
             .done(function(spriteKey) {
                 self.spriteKey = spriteKey;
                 self.initializeCamera();
@@ -101,6 +101,7 @@ define([
 
     function initializeSquareFactory () {
         var width = 10;
+        JAG.sprites.createSpriteFromResource(this.spriteKey);
         JAG.squareFactory.loadConfig(config);
         JAG.squareFactory.loadContext(this);
         // TODO: camera is being injected into too many objects
